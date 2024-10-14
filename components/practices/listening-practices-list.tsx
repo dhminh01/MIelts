@@ -18,7 +18,7 @@ export default async function ListeningPracticesList() {
             key={practice.id}
             className="flex items-center justify-between px-5"
           >
-            <Link href={`/practice-libraries/${practice.skill}/${practice.id}`}>
+            <Link href={`/practice-libraries/${practice.id}`}>
               {practice.title}
             </Link>
           </li>
