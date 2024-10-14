@@ -108,11 +108,13 @@ model IeltsPractices {
 
   user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   ListeningPractices ListeningPractices[]
+  ReadingPractices   ReadingPractices[]
+  WritingPractices   WritingPractices[]
+  SpeakingPractices  SpeakingPractices[]
 }
 
 model ListeningPractices {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
-  practiceId     String @db.ObjectId
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
   part           Int
   title          String
   audioUrl       String
@@ -120,9 +122,51 @@ model ListeningPractices {
   questions      Json
   answers        Json
   correctAnswers Json
-  result         Int
+  score          Int
+  duration       Int
+  practiceId     String         @db.ObjectId
+  practice       IeltsPractices @relation(fields: [practiceId], references: [id], onDelete: Cascade)
+}
 
-  practice IeltsPractices @relation(fields: [practiceId], references: [id], onDelete: Cascade)
+model ReadingPractices {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  part           Int
+  title          String
+  content        String
+  questions      Json
+  answers        Json
+  correctAnswers Json
+  result         Int
+  duration       Int
+  practiceId     String         @db.ObjectId
+  practice       IeltsPractices @relation(fields: [practiceId], references: [id], onDelete: Cascade)
+}
+
+model WritingPractices {
+  id         String         @id @default(auto()) @map("_id") @db.ObjectId
+  part       Int
+  title      String
+  content    String
+  topic      String
+  question   String
+  suggestion String
+  answer     String
+  duration   Int
+  practiceId String         @db.ObjectId
+  practice   IeltsPractices @relation(fields: [practiceId], references: [id], onDelete: Cascade)
+}
+
+model SpeakingPractices {
+  id         String         @id @default(auto()) @map("_id") @db.ObjectId
+  part       Int
+  title      String
+  content    String
+  question   String
+  cueCard    String
+  record     String
+  duration   Int
+  practiceId String         @db.ObjectId
+  practice   IeltsPractices @relation(fields: [practiceId], references: [id], onDelete: Cascade)
 }
 
 model IeltsTips {

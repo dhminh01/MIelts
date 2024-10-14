@@ -1,4 +1,4 @@
-import LoginGoogle from "@/components/layout/LoginGoogle";
+import LoginGoogle from "@/components/auth/LoginGoogle";
 import React from "react";
 
 export default function SignIn() {

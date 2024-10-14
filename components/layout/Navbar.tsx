@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import Link from "next/link";
 import React from "react";
-import Logout from "./Logout";
+import Logout from "../auth/Logout";
 import Image from "next/image";
 import { House } from "lucide-react";
 
