@@ -4,6 +4,8 @@ import React from "react";
 import Logout from "../auth/Logout";
 import Image from "next/image";
 import { House } from "lucide-react";
+import { LoginButton } from "../auth/login-button";
+import { Button } from "../ui/button";
 
 async function Navbar() {
   const session = await auth();
@@ -31,26 +33,11 @@ async function Navbar() {
           ))}
         </div>
         <div className="flex items-center gap-x-5">
-          {!session?.user ? (
-            <Link href={"/sign-in"}>
-              <div className="font-bold hover:text-primary">Đăng nhập</div>
-            </Link>
-          ) : (
-            <>
-              <div className="flex items-center text-sm gap-x-2">
-                {session?.user?.image && (
-                  <Image
-                    src={session?.user?.image || ""}
-                    height={30}
-                    width={30}
-                    alt="User avatar"
-                    className="rounded-full"
-                  />
-                )}
-              </div>
-              <Logout />
-            </>
-          )}
+          <LoginButton >
+            <Button variant={"secondary"} size={"lg"}>
+              Đăng nhập
+            </Button>
+          </LoginButton>
         </div>
       </div>
     </nav>
