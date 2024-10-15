@@ -20,7 +20,7 @@ export const Header = ({ label }: HeaderProps) => {
           font.className
         )}
       >
-        MIelts Demo Application
+        MIelts Application
       </h1>
       <p className="text-sm text-muted-foreground">{label}</p>
     </div>
