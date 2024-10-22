@@ -74,18 +74,23 @@ model Test {
 }
 
 model Section {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  title     String // Tiêu đề phần
-  audioURL  String? // URL file audio cho phần này (nếu có, cho Listening)
-  questions Question[] // Các câu hỏi thuộc phần này
-  testId    String     @db.ObjectId
-  test      Test       @relation(fields: [testId], references: [id], onDelete: Cascade)
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  sectionTitle String // Tiêu đề phần
+  description  String? //Miêu tả của từng phần
+  audioURL     String? // URL file audio cho phần này (nếu có, cho Listening)
+  imgUrl       String?
+  passage      String? // Đoạn văn đề bài của phần Reading
+  questions    Question[] // Các câu hỏi thuộc phần này
+  testId       String     @db.ObjectId
+  test         Test       @relation(fields: [testId], references: [id], onDelete: Cascade)
 }
 
 model Question {
   id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  questionTitle String // VD: Questions 1-10, 11-20
+  description   String // VD: Choose ONE WORD AND/OR A NUMBER from the passage for each answer. Write your answers in boxes 21-26 on your answer sheet.
   questionNum   Int
-  questionText  String
+  questionText  String // Đề bài
   type          QuestionType
   answer        Json
   correctAnswer String

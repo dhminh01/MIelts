@@ -1,14 +1,37 @@
+import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
-import db from "@/lib/db";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json({ message: "ID is required" }, { status: 400 });
+  }
+
   try {
-    const tests = await db.test.findMany(); // Lấy danh sách bài thi từ cơ sở dữ liệu
-    return NextResponse.json({ tests });
+    const test = await prisma.test.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        sections: {
+          include: {
+            questions: true,
+          },
+        },
+      },
+    });
+
+    if (!test) {
+      return NextResponse.json({ message: "Test not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ test });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { message: "Failed to fetch tests." },
+      { message: "Error fetching test" },
       { status: 500 }
     );
   }

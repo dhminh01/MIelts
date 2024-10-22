@@ -20,7 +20,7 @@
               "questionText": "What is the man's name?",
               "type": "MULTIPLE_CHOICE",
               "answer": {
-                "options": ["John", "James", "Jake"]
+                "options": ["A. John", "B. James", "C. Jake"]
               },
               "correctAnswer": "John"
             }
