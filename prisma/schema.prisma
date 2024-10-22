@@ -23,10 +23,8 @@ model User {
   accounts      Account[]
   role          ROLE?     @default(USER)
 
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  Practices           IeltsPractices[]
-  UserPracticeHistory UserPracticeHistory[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum ROLE {
@@ -57,20 +55,6 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-model UserPracticeHistory {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String   @db.ObjectId
-  practiceId  String   @db.ObjectId
-  skill       SKILL
-  score       Int // Score after submission
-  userAnswers Json // User's submitted answers
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  practice IeltsPractices @relation(fields: [practiceId], references: [id], onDelete: Cascade)
-}
-
 model VerificationToken {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   email   String
@@ -80,95 +64,55 @@ model VerificationToken {
   @@unique([email, token])
 }
 
-model IeltsPractices {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  skill       SKILL
-  title       String
-  description String?
-  content     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  isCompleted Boolean
-  accessCount Int
-
-  ListeningPractices  ListeningPractices[]
-  ReadingPractices    ReadingPractices[]
-  WritingPractices    WritingPractices[]
-  SpeakingPractices   SpeakingPractices[]
-  User                User?                 @relation(fields: [userId], references: [id])
-  userId              String?               @db.ObjectId
-  UserPracticeHistory UserPracticeHistory[]
+model Test {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  title     String // Tiêu đề bài thi
+  skill     Skill // Kỹ năng (Listening, Reading, Writing, Speaking)
+  sections  Section[] // Các phần của bài thi
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
-model ListeningPractices {
-  id             String         @id @default(auto()) @map("_id") @db.ObjectId
-  part           Int
-  title          String
-  audioUrl       String
-  content        String
-  questions      Json
-  answers        Json
-  correctAnswers Json
-  score          Int
-  duration       Int
-  practiceId     String         @db.ObjectId
-  practice       IeltsPractices @relation(fields: [practiceId], references: [id], onDelete: Cascade)
+model Section {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  title     String // Tiêu đề phần
+  audioURL  String? // URL file audio cho phần này (nếu có, cho Listening)
+  questions Question[] // Các câu hỏi thuộc phần này
+  testId    String     @db.ObjectId
+  test      Test       @relation(fields: [testId], references: [id], onDelete: Cascade)
 }
 
-model ReadingPractices {
-  id             String         @id @default(auto()) @map("_id") @db.ObjectId
-  part           Int
-  title          String
-  content        String
-  questions      Json
-  answers        Json
-  correctAnswers Json
-  result         Int
-  duration       Int
-  practiceId     String         @db.ObjectId
-  practice       IeltsPractices @relation(fields: [practiceId], references: [id], onDelete: Cascade)
+model Question {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  questionNum   Int
+  questionText  String
+  type          QuestionType
+  answer        Json
+  correctAnswer String
+  sectionId     String       @db.ObjectId
+  section       Section      @relation(fields: [sectionId], references: [id], onDelete: Cascade)
 }
 
-model WritingPractices {
-  id         String         @id @default(auto()) @map("_id") @db.ObjectId
-  part       Int
-  title      String
-  content    String
-  topic      String
-  question   String
-  suggestion String
-  answer     String
-  duration   Int
-  practiceId String         @db.ObjectId
-  practice   IeltsPractices @relation(fields: [practiceId], references: [id], onDelete: Cascade)
-}
-
-model SpeakingPractices {
-  id         String         @id @default(auto()) @map("_id") @db.ObjectId
-  part       Int
-  title      String
-  content    String
-  question   String
-  cueCard    String
-  record     String
-  duration   Int
-  practiceId String         @db.ObjectId
-  practice   IeltsPractices @relation(fields: [practiceId], references: [id], onDelete: Cascade)
-}
-
-model IeltsTips {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  skill       SKILL
-  title       String
-  description String?
-  content     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-enum SKILL {
+enum Skill {
   LISTENING
   READING
   WRITING
   SPEAKING
+}
+
+enum QuestionType {
+  FILL_IN_THE_BLANK
+  MULTIPLE_CHOICE
+  SHORT_ANSWER
+}
+
+//Tips for practicing Ielts
+model IeltsTips {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  skill       Skill
+  title       String
+  description String?
+  content     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

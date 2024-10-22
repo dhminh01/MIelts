@@ -25,18 +25,20 @@ export default function QuestionsPage() {
     },
   ];
   return (
-    <main className="flex flex-col items-center justify-center h-full">
-      <h1 className="text-3xl">Ratings Page</h1>
-      <div className="gap-5">
-        {frequentlyQuestions.map((routes) => (
-          <Link
-            href={routes.path}
-            key={routes.path}
-            className="py-2 font-bold hover:text-primary"
-          >
-            {routes.label}
-          </Link>
-        ))}
+    <main className="flex flex-col h-full">
+      <div>
+        <h1 className="pb-2 text-3xl">Câu hỏi thường gặp</h1>
+        <div className="flex flex-col gap-3 ">
+          {frequentlyQuestions.map((routes) => (
+            <Link
+              href={routes.path}
+              key={routes.path}
+              className="py-2 font-bold hover:text-primary"
+            >
+              {routes.label}
+            </Link>
+          ))}
+        </div>
       </div>
     </main>
   );
