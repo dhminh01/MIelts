@@ -23,8 +23,9 @@ model User {
   accounts      Account[]
   role          ROLE?     @default(USER)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  TestHistory TestHistory[]
 }
 
 enum ROLE {
@@ -65,18 +66,19 @@ model VerificationToken {
 }
 
 model Test {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  title     String // Tiêu đề bài thi
-  skill     Skill // Kỹ năng (Listening, Reading, Writing, Speaking)
-  sections  Section[] // Các phần của bài thi
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  title       String // Tiêu đề bài thi
+  skill       Skill // Kỹ năng (Listening, Reading, Writing, Speaking)
+  sections    Section[] // Các phần của bài thi
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  TestHistory TestHistory[]
 }
 
 model Section {
   id           String     @id @default(auto()) @map("_id") @db.ObjectId
   sectionTitle String // Tiêu đề phần
-  description  String? //Miêu tả của từng phần
+  description  String? // Miêu tả của từng phần
   audioURL     String? // URL file audio cho phần này (nếu có, cho Listening)
   imgUrl       String?
   passage      String? // Đoạn văn đề bài của phần Reading
@@ -87,8 +89,8 @@ model Section {
 
 model Question {
   id            String       @id @default(auto()) @map("_id") @db.ObjectId
-  questionTitle String // VD: Questions 1-10, 11-20
-  description   String // VD: Choose ONE WORD AND/OR A NUMBER from the passage for each answer. Write your answers in boxes 21-26 on your answer sheet.
+  questionTitle String? // VD: Questions 1-10, 11-20
+  description   String? // VD: Choose ONE WORD AND/OR A NUMBER from the passage for each answer. Write your answers in boxes 21-26 on your answer sheet.
   questionNum   Int
   questionText  String // Đề bài
   type          QuestionType
@@ -96,6 +98,15 @@ model Question {
   correctAnswer String
   sectionId     String       @db.ObjectId
   section       Section      @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  Blank         Blank[]
+}
+
+model Blank {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  questionId  String   @db.ObjectId
+  placeholder String // Ký hiệu cho chỗ trống
+  options     Json // Mảng các từ gợi ý cho chỗ trống
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 }
 
 enum Skill {
@@ -109,6 +120,20 @@ enum QuestionType {
   FILL_IN_THE_BLANK
   MULTIPLE_CHOICE
   SHORT_ANSWER
+}
+
+//Test history
+model TestHistory {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  testId      String   @db.ObjectId
+  userAnswers Json
+  score       Float?
+  createdAt   DateTime @default(now())
+  skill       String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  test Test @relation(fields: [testId], references: [id], onDelete: Cascade)
 }
 
 //Tips for practicing Ielts

@@ -17,7 +17,7 @@ export default async function ListeningPracticesList() {
       <ul>
         {listeningTests.map((test) => (
           <li key={test.id} className="flex items-center justify-between px-5">
-            <Link href={`/practice-libraries/${test.id}`}>
+            <Link href={`/tests/${test.id}`}>
               {test.title} - {test.skill}
             </Link>
           </li>

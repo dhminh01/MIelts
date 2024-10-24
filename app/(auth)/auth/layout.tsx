@@ -1,6 +1,11 @@
+import Topbar from "@/components/layout/Topbar";
+
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex items-center justify-center h-full">{children}</div>
+    <div className="flex flex-col items-center justify-center h-full">
+      <Topbar />
+      {children}
+    </div>
   );
 };
 

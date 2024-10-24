@@ -1,7 +1,6 @@
-import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
 import Link from "next/link";
 import React from "react";
-import Image from "next/image";
 import { House } from "lucide-react";
 import { LoginButton } from "../auth/login-button";
 import { Button } from "../ui/button";
@@ -12,19 +11,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { revalidatePath } from "next/cache";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { FaUser } from "react-icons/fa";
+import { LogoutButton } from "../auth/logout-button";
+import { ExitIcon } from "@radix-ui/react-icons";
+import { IoHelpCircleOutline } from "react-icons/io5";
+import { CgProfile } from "react-icons/cg";
 
 async function Navbar() {
   const session = await auth();
 
   const imageUrl = session?.user?.image;
-  const name = session?.user?.name;
+  // const name = session?.user?.name;
 
   const navRoutes = [
     { label: "Thư viện đề thi Ielts", path: "/practice-libraries" },
     { label: "IELTS Tips", path: "/ielts-tips" },
     { label: "IELTS Preps", path: "/ielts-preps" },
-    { label: "Đăng ký giảng viên", path: "/instructor/booking" },
+    { label: "Đăng ký giảng viên", path: "/booking" },
+    { label: "Blog", path: "/blog" },
   ];
   return (
     <nav className="flex items-center w-full border-b bg-background">
@@ -57,49 +62,40 @@ async function Navbar() {
                   variant={"secondary"}
                   className="flex items-center justify-start gap-1 p-0 m-0 bg-white lg:gap-3 lg:px-3 lg:w-full"
                 >
-                  {imageUrl && (
-                    <Image
-                      src={imageUrl}
-                      width={24}
-                      height={24}
-                      alt="user profile picture"
-                      className="rounded-full"
-                    />
-                  )}
-                  <p className="truncate">{name}</p>
+                  <Avatar>
+                    <AvatarImage src={imageUrl || ""} />
+                    <AvatarFallback className="bg-slate-500">
+                      <FaUser className="text-white" />
+                    </AvatarFallback>
+                  </Avatar>
+                  {/* <p className="truncate">{name}</p> */}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-52">
+              <DropdownMenuContent className="font-semibold w-52">
                 <DropdownMenuItem className="flex items-center justify-center">
-                  <Button variant={"ghost"} className="hover:text-primary">
-                    <Link href={"/user-profile"}>Tài khoản</Link>
-                  </Button>
+                  <CgProfile className="w-4 h-4 mr-2" />
+                  <Link href={"/user-profile/my-dashboard"} className="p-2">
+                    Tài khoản
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="flex items-center justify-center">
-                  <Button variant={"ghost"} className="hover:text-primary">
-                    <Link href={"/frequently-asked-questions/about-us"}>
-                      Hỗ trợ
-                    </Link>
-                  </Button>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex items-center justify-center">
-                  <form
-                    action={async () => {
-                      "use server";
-                      await signOut({ redirectTo: "/" });
-                      revalidatePath("/");
-                    }}
+                  <IoHelpCircleOutline className="w-4 h-4 mr-2" />
+                  <Link
+                    href={"/frequently-asked-questions/about-us"}
+                    className="p-2"
                   >
-                    <Button
-                      variant={"ghost"}
-                      type="submit"
-                      className="hover:text-primary"
-                    >
+                    Hỗ trợ
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="flex items-center justify-center">
+                  <LogoutButton>
+                    <DropdownMenuItem>
+                      <ExitIcon className="w-4 h-4 mr-2" />
                       Đăng xuất
-                    </Button>
-                  </form>
+                    </DropdownMenuItem>
+                  </LogoutButton>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -1,0 +1,96 @@
+{
+  "tests": [
+    {
+      "title": "IELTS Listening Practice Test 1",
+      "skill": "LISTENING",
+      "sections": [
+        {
+          "sectionTitle": "SECTION 1 Question 1-10",
+          "audioURL": "/audio/listening-practice-1/part 1.mp3",
+          "questions": [
+            {
+              "questionTitle": "Questions 1-5",
+              "description": "Circle the appropriate letter.",
+              "questionNum": 1,
+              "questionText": "What does her briefcase look like?",
+              "type": "MULTIPLE_CHOICE",
+              "answer": {
+                "options": [
+                  {
+                    "label": "A",
+                    "imageUrl": "/test-images/listening-practice-1/q1-optionA.jpg"
+                  },
+                  {
+                    "label": "B",
+                    "imageUrl": "/test-images/listening-practice-1/q1-optionB.jpg"
+                  },
+                  {
+                    "label": "C",
+                    "imageUrl": "/test-images/listening-practice-1/q1-optionC.jpg"
+                  },
+                  {
+                    "label": "D",
+                    "imageUrl": "/test-images/listening-practice-1/q1-optionD.jpg"
+                  }
+                ]
+              },
+              "correctAnswer": "A"
+            },
+            {
+              "questionNum": 2,
+              "questionText": "What does her briefcase look like?",
+              "type": "MULTIPLE_CHOICE",
+              "answer": {
+                "options": [
+                  {
+                    "label": "A",
+                    "imageUrl": "/test-images/listening-practice-1/q1-optionA.jpg"
+                  },
+                  {
+                    "label": "B",
+                    "imageUrl": "/test-images/listening-practice-1/q1-optionB.jpg"
+                  },
+                  {
+                    "label": "C",
+                    "imageUrl": "/test-images/listening-practice-1/q1-optionC.jpg"
+                  },
+                  {
+                    "label": "D",
+                    "imageUrl": "/test-images/listening-practice-1/q1-optionD.jpg"
+                  }
+                ]
+              },
+              "correctAnswer": "B"
+            },
+            {
+              "questionNum": 3,
+              "questionText": "What does her briefcase look like?",
+              "type": "MULTIPLE_CHOICE",
+              "answer": {
+                "options": [
+                  {
+                    "label": "A",
+                    "imageUrl": "/test-images/listening-practice-1/q1-optionA.jpg"
+                  },
+                  {
+                    "label": "B",
+                    "imageUrl": "/test-images/listening-practice-1/q1-optionB.jpg"
+                  },
+                  {
+                    "label": "C",
+                    "imageUrl": "/test-images/listening-practice-1/q1-optionC.jpg"
+                  },
+                  {
+                    "label": "D",
+                    "imageUrl": "/test-images/listening-practice-1/q1-optionD.jpg"
+                  }
+                ]
+              },
+              "correctAnswer": "C"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

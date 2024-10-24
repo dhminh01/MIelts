@@ -1,11 +1,11 @@
 import PracticesFiter from "@/components/filter/practice-filter";
-import SearchPractices from "@/components/filter/practice-search";
+import SearchBar from "@/components/filter/search-bar";
 
 const HomeLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <PracticesFiter />
-      <SearchPractices />
+      <SearchBar />
       {children}
     </>
   );

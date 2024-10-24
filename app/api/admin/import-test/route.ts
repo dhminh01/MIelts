@@ -13,10 +13,12 @@ export async function POST(request: Request) {
             skill: test.skill, // Đảm bảo có trường skill trong JSON
             sections: {
               create: test.sections.map((section) => ({
-                title: section.title,
+                sectionTitle: section.sectionTitle,
                 audioURL: section.audioURL,
                 questions: {
                   create: section.questions.map((question) => ({
+                    questionTitle: question.questionTitle,
+                    description: question.description,
                     questionNum: question.questionNum,
                     questionText: question.questionText,
                     type: question.type,

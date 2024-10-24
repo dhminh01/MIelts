@@ -1,37 +1,14 @@
-import prisma from "@/lib/db";
 import { NextResponse } from "next/server";
+import db from "@/lib/db";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
-
-  if (!id) {
-    return NextResponse.json({ message: "ID is required" }, { status: 400 });
-  }
-
+export async function GET() {
   try {
-    const test = await prisma.test.findUnique({
-      where: {
-        id: id,
-      },
-      include: {
-        sections: {
-          include: {
-            questions: true,
-          },
-        },
-      },
-    });
-
-    if (!test) {
-      return NextResponse.json({ message: "Test not found" }, { status: 404 });
-    }
-
-    return NextResponse.json({ test });
+    const tests = await db.test.findMany(); // Lấy danh sách bài thi từ cơ sở dữ liệu
+    return NextResponse.json({ tests });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { message: "Error fetching test" },
+      { message: "Failed to fetch tests." },
       { status: 500 }
     );
   }

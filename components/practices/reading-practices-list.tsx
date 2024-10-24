@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 
 export default async function ReadingPracticesList() {
-  const readingTests = await prisma.ieltsTest.findMany({
+  const readingTests = await prisma.test.findMany({
     where: {
       skill: "READING",
     },
@@ -15,8 +15,8 @@ export default async function ReadingPracticesList() {
       <ul>
         {readingTests.map((test) => (
           <li key={test.id} className="flex items-center justify-between px-5">
-            <Link href={`/practice-libraries`}>
-              {test.title} - {test.skill} (Part {test.part})
+            <Link href={`/tests/${test.id}`}>
+              {test.title} - {test.skill}
             </Link>
           </li>
         ))}

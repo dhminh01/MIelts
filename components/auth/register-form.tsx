@@ -58,8 +58,8 @@ export const RegisterForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Create an account"
-      backButtonLabel="Already have an account?"
+      headerLabel="Tạo tài khoản"
+      backButtonLabel="Đã có tài khoản? Đăng nhập ngay"
       backButtonHref="/auth/login"
       showSocial
     >
@@ -78,7 +78,7 @@ export const RegisterForm = () => {
                         <Input
                           {...field}
                           disabled={isPending}
-                          placeholder="Enter your name..."
+                          placeholder="Nhập tên..."
                         />
                       </FormControl>
                       <FormMessage />
@@ -97,7 +97,7 @@ export const RegisterForm = () => {
                         <Input
                           {...field}
                           disabled={isPending}
-                          placeholder="Enter your email..."
+                          placeholder="Nhập email..."
                           type="email"
                         />
                       </FormControl>

@@ -49,8 +49,8 @@ export const LoginForm = () => {
 
   return (
     <CardWrapper
-      headerLabel="Login to MIelts"
-      backButtonLabel="Don't have an account?"
+      headerLabel="Đăng nhập vào MIelts"
+      backButtonLabel="Chưa có tài khoản? Đăng ký ngay"
       backButtonHref="/auth/register"
       showSocial
     >
@@ -69,7 +69,7 @@ export const LoginForm = () => {
                         <Input
                           {...field}
                           disabled={isPending}
-                          placeholder="Enter your email..."
+                          placeholder="Nhập email..."
                           type="email"
                         />
                       </FormControl>
@@ -102,7 +102,7 @@ export const LoginForm = () => {
             <FormError message={error} />
             <FormSuccess message={success} />
             <Button disabled={isPending} type="submit" className="w-full">
-              Login
+              Đăng nhập
             </Button>
           </form>
         </Form>

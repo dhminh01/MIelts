@@ -11,7 +11,7 @@ export default async function AllSkillsList() {
       <ul>
         {tests.map((test) => (
           <li key={test.id} className="flex items-center justify-between px-5">
-            <Link href={`/practice-libraries/${test.id}`}>
+            <Link href={`/tests/${test.id}`}>
               {test.title} - {test.skill}
             </Link>
           </li>

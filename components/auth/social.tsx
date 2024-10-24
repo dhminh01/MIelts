@@ -20,7 +20,7 @@ export const Social = () => {
         variant={"outline"}
         onClick={() => onClick("google")}
       >
-        <FcGoogle className="w-5 h-5" />
+        <FcGoogle className="w-5 h-5" /> Đăng nhập với Google
       </Button>
     </div>
   );

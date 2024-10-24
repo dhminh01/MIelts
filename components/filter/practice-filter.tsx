@@ -1,4 +1,5 @@
-import Link from "next/link";
+"use client"; // This makes the component a Client Component
+
 import React from "react";
 import { Button } from "../ui/button";
 import {
@@ -9,33 +10,63 @@ import {
   PenTool,
 } from "lucide-react";
 
-export default async function PracticesFilter() {
+export default function PracticesFilter() {
   return (
     <div className="flex items-center h-5 p-10 space-x-4 text-xl">
       {/* Static button for ALL SKILLS */}
-      <Button variant={"ghost"} className="hover:bg-sky-300">
+      <Button
+        variant={"ghost"}
+        className="hover:bg-sky-300"
+        onClick={() =>
+          (window.location.href = `/practice-libraries/filter/all-skills`)
+        } // Ensures a full reload
+      >
         <Home size={"30px"} className="pr-2" />
-        <Link href={`/practice-libraries/filter/all-skills`}>ALL SKILLS</Link>
+        ALL SKILLS
       </Button>
 
-      <Button variant={"ghost"} className="hover:bg-purple-300">
+      <Button
+        variant={"ghost"}
+        className="hover:bg-purple-300"
+        onClick={() =>
+          (window.location.href = `/practice-libraries/filter/listening`)
+        } // Ensures a full reload
+      >
         <BookHeadphones size={"30px"} className="pr-2" />
-        <Link href={`/practice-libraries/filter/listening`}>LISTENING</Link>
+        LISTENING
       </Button>
 
-      <Button variant={"ghost"} className="hover:bg-green-300">
+      <Button
+        variant={"ghost"}
+        className="hover:bg-green-300"
+        onClick={() =>
+          (window.location.href = `/practice-libraries/filter/reading`)
+        } // Ensures a full reload
+      >
         <BookOpenText size={"30px"} className="pr-2" />
-        <Link href={`/practice-libraries/filter/reading`}>READING</Link>
+        READING
       </Button>
 
-      <Button variant={"ghost"} className="hover:bg-orange-200">
+      <Button
+        variant={"ghost"}
+        className="hover:bg-orange-200"
+        onClick={() =>
+          (window.location.href = `/practice-libraries/filter/writing`)
+        } // Ensures a full reload
+      >
         <PenTool size={"30px"} className="pr-2" />
-        <Link href={`/practice-libraries/filter/writing`}>WRITING</Link>
+        WRITING
       </Button>
 
-      <Button variant={"ghost"} className="hover:bg-slate-300">
+      <Button
+        variant={"ghost"}
+        className="hover:bg-slate-300"
+        onClick={() =>
+          (window.location.href = `/practice-libraries/filter/speaking`)
+        } // Ensures a full reload
+      >
         <MicVocal size={"30px"} className="pr-2" />
-        <Link href={`/practice-libraries/filter/speaking`}>SPEAKING</Link>
+        SPEAKING
       </Button>
     </div>
   );
