@@ -1,30 +1,29 @@
+"use server";
+
+import * as z from "zod";
+
 import prisma from "@/lib/db";
-import { auth } from "@/auth"; // Adjust import based on your authentication logic
+import { SettingsSchema } from "@/schemas";
+import { getUserById } from "@/data/user";
+import { currentUser } from "@/lib/auth";
 
-export async function POST(request: Request) {
-  const session = await auth(); // Get the session to find the user
-  const { name, password, image } = await request.json();
+export const settings = async (values: z.infer<typeof SettingsSchema>) => {
+  const user = await currentUser();
 
-  if (!session) {
-    return new Response("Unauthorized", { status: 401 });
+  if (!user) {
+    return { error: "Unauthorized!" };
+  }
+  const dbUser = await getUserById(user.id);
+  if (!dbUser) {
+    return { error: "Unauthorized" };
   }
 
-  try {
-    const userId = session.user.id;
+  await prisma.user.update({
+    where:{id: dbUser.id},
+    data:{
+      ...values,
+    }
+  })
 
-    // Update user settings in the database
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: {
-        name,
-        password, // Ensure to handle password hashing if necessary
-        image,
-      },
-    });
-
-    return new Response(JSON.stringify(updatedUser), { status: 200 });
-  } catch (error) {
-    console.error("Error updating user settings:", error);
-    return new Response("Failed to update settings", { status: 500 });
-  }
-}
+  return {success:"Settings updated!"}
+};

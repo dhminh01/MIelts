@@ -1,0 +1,6 @@
+Form nhập câu hỏi: Admin, Instructor
+User: 
+- LISTENING: Không tự động chấm điểm, thay vào đó lưu lại câu trả lời sau đó cho người dùng review và tự chấm
+- WRITING và SPEAKING: 2 phương án: 
+    + Hoặc là lưu lại sau đó book chấm
+    + Với SPEAKING thì như phương án 1, hoặc là book trực tiếp để người ta hỏi mình

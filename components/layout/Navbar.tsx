@@ -84,6 +84,7 @@ async function Navbar() {
                   <Link
                     href={"/frequently-asked-questions/about-us"}
                     className="p-2"
+                    replace
                   >
                     Hỗ trợ
                   </Link>

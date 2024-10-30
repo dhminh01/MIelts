@@ -67,7 +67,7 @@ model VerificationToken {
 
 model Test {
   id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  title       String // Tiêu đề bài thi
+  title       String        @unique // Tiêu đề bài thi
   skill       Skill // Kỹ năng (Listening, Reading, Writing, Speaking)
   sections    Section[] // Các phần của bài thi
   createdAt   DateTime      @default(now())

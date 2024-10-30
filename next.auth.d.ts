@@ -1,7 +1,9 @@
 import { type DefaultSession } from "next-auth";
+import { ROLE } from "@prisma/client";
 
 export type ExtendedUser = DefaultSession["user"] & {
-  role: "ADMIN" | "USER" | "INTRUCTOR";
+  role: ROLE;
+  isOAuth: boolean;
 };
 
 declare module "next-auth" {

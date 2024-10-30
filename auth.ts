@@ -4,6 +4,8 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { getUserById } from "@/data/user";
 import db from "@/lib/db";
 import authConfig from "./auth.config";
+import { ROLE } from "@prisma/client";
+import { getAccountByUserId } from "./data/accounts";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   events: {
@@ -32,7 +34,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       if (token.role && session.user) {
-        session.user.role = token.role as "ADMIN" | "USER" | "INTRUCTOR";
+        session.user.role = token.role as ROLE;
+      }
+
+      if (session.user) {
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.isOAuth = token.isOAuth as boolean;
       }
 
       return session;
@@ -44,6 +52,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       if (!existingUser) return token;
 
+      const existingAccount = await getAccountByUserId(existingUser.id);
+
+      token.isOAuth = !!existingAccount;
+
+      token.name = existingUser.name;
+      token.email = existingUser.email;
       token.role = existingUser.role;
 
       return token;

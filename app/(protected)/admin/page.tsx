@@ -4,7 +4,7 @@ import React from "react";
 function AdminPage() {
   const adminComponents = [
     { Label: "Quản lý bài luyện thi", path: "/admin/tests" },
-    { Label: "Quản lý tài khoản", path: "/admin/users" },
+    { Label: "Quản lý tài khoản", path: "/admin/accounts" },
   ];
   return (
     <div className="flex flex-wrap justify-center gap-5">
