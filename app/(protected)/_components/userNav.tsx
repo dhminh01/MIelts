@@ -17,19 +17,19 @@ export const UserProfileNavbar = () => {
   return (
     <div className="flex flex-col items-center justify-center p-4 shadow-sm md:flex-row rounded-xl">
       <div className="flex flex-wrap gap-2">
-        <Button
+        {/* <Button
           onClick={() => handleNavigation("/user-profile/server")}
           variant={pathname === "/user-profile/server" ? "default" : "outline"}
         >
           Server
-        </Button>
+        </Button> */}
         <Button
           onClick={() => handleNavigation("/user-profile/my-dashboard")}
           variant={
             pathname === "/user-profile/my-dashboard" ? "default" : "outline"
           }
         >
-          Profile
+          Dashboard
         </Button>
         <Button
           onClick={() => handleNavigation("/user-profile/settings")}
