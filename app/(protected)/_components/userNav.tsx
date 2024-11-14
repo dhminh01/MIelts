@@ -57,6 +57,12 @@ export const UserProfileNavbar = () => {
         >
           Wallet
         </Button>
+        <Button
+          onClick={() => handleNavigation("/user-profile/meeting")}
+          variant={pathname === "/user-profile/meeting" ? "default" : "outline"}
+        >
+          Meeting
+        </Button>
         {role === ROLE.ADMIN && (
           <Button
             onClick={() => handleNavigation("/user-profile/admin")}

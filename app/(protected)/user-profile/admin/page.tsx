@@ -6,17 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ROLE } from "@prisma/client";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const AdminPage = () => {
-  const onApiRouteClick = () => {
-    fetch("/api/admin").then((response) => {
-      if (response.ok) {
-        toast.success("Allowed API Route!");
-      } else {
-        toast.error("Forbidden API Route!");
-      }
-    });
-  };
+  const router = useRouter();
+
+  // const onApiRouteClick = () => {
+  //   fetch("/api/admin").then((response) => {
+  //     if (response.ok) {
+  //       toast.success("Allowed API Route!");
+  //     } else {
+  //       toast.error("Forbidden API Route!");
+  //     }
+  //   });
+  // };
 
   return (
     <Card className="w-full ">
@@ -27,13 +30,41 @@ export const AdminPage = () => {
         <RoleGate allowedRole={ROLE.ADMIN}>
           <FormSuccess message="You are allow to see this content" />
         </RoleGate>
-        <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
+        {/* <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
           <p className="text-sm font-medium">Admin-only API Route</p>
           <Button onClick={onApiRouteClick}>Click to test</Button>
+        </div> */}
+        <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
+          <p className="font-medium">Quản lý tài khoản người dùng</p>
+          <Button onClick={() => router.push("")}>Click Here</Button>
         </div>
         <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
-          <p className="text-sm font-medium">Admin-only Server Action</p>
-          <Button>Click to test</Button>
+          <p className="font-medium ">Quản lý tài khoản giảng viên</p>
+          <Button onClick={() => router.push("")}>Click Here</Button>
+        </div>
+        <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
+          <p className="font-medium ">Quản lý bài luyện thi</p>
+          <Button onClick={() => router.push("")}>Click Here</Button>
+        </div>
+        <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
+          <p className="font-medium ">Tạo bài luyện thi Listening</p>
+          <Button
+            onClick={() => router.push("/admin/tests/create-listening-test")}
+          >
+            Click Here
+          </Button>
+        </div>
+        <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
+          <p className="font-medium ">Tạo bài luyện thi Reading</p>
+          <Button onClick={() => router.push("")}>Click Here</Button>
+        </div>
+        <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
+          <p className="font-medium ">Tạo bài luyện thi Writing</p>
+          <Button onClick={() => router.push("")}>Click Here</Button>
+        </div>
+        <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
+          <p className="font-medium ">Tạo bài luyện thi Speaking</p>
+          <Button onClick={() => router.push("")}>Click Here</Button>
         </div>
       </CardContent>
     </Card>

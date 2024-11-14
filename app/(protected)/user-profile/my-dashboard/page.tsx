@@ -1,12 +1,11 @@
+"use client";
+
 import ScoreChart from "@/components/scoreChart";
+import { useSession } from "next-auth/react";
 
-const DashboardPage = () => {
-  return (
-    <div className="flex flex-col items-center justify-center p-4">
-      <h1 className="pb-4 text-xl font-bold">Biểu đồ điểm số qua thời gian</h1>
-      <ScoreChart />
-    </div>
-  );
-};
+export default function UserDashboard() {
+  const session = useSession();
+  const userId = session.data?.user.id;
 
-export default DashboardPage;
+  return <ScoreChart userId={userId} />;
+}

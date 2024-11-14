@@ -71,3 +71,22 @@ export const FormSchema = z.object({
     .array(QuestionSchema)
     .nonempty({ message: "At least one question is required" }),
 });
+
+// Instructor registration form handle error
+export const InstructorRegistrationSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email format"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(
+      /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*])/,
+      "Password must include uppercase, lowercase, number, and special character"
+    ),
+  ieltsProof: z
+    .any()
+    .refine(
+      (file) => file instanceof File && file.size > 0,
+      "IELTS proof is required"
+    ),
+});

@@ -7,8 +7,7 @@ const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
 
-  // Hàm để tìm kiếm dựa trên tiêu đề
-  const handleSearch = async (value) => {
+  const handleSearch = async (value: string) => {
     if (value.trim() === "") {
       setResults([]);
       return;
@@ -16,7 +15,7 @@ const SearchBar = () => {
 
     try {
       const response = await fetch(
-        `../../api/ielts/search?title=${encodeURIComponent(searchTerm)}`
+        `/api/ielts/search?title=${encodeURIComponent(value)}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -28,17 +27,17 @@ const SearchBar = () => {
       console.error("Error during search:", error);
     }
   };
-  const handleKeyDown = (event) => {
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      handleSearch();
+      handleSearch(searchTerm);
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
     handleSearch(value);
-    // Clear results if the input is empty
   };
 
   return (
@@ -49,25 +48,23 @@ const SearchBar = () => {
           value={searchTerm}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          placeholder="Search for a test by title..."
+          placeholder="Search for a test..."
           className="w-full p-2 border border-gray-300 rounded-lg"
         />
-        <button
-          onClick={handleSearch}
-          className="p-2 ml-2 text-white bg-blue-500 rounded-lg"
-        >
-          Search
-        </button>
       </div>
 
-      {/* Hiển thị kết quả tìm kiếm */}
       <div>
         {results.length > 0 ? (
           <ul className="pl-5 list-disc">
             {results.map((test) => (
-              <li key={test.id}>
+              <li
+                key={test.id}
+                className="flex items-center justify-between px-5"
+              >
                 <Link
-                  href={`/practice-libraries/${test.id}`}
+                  href={`/practice-libraries/${test.skill.toLowerCase()}/${
+                    test.id
+                  }`}
                   className="hover:text-primary/50"
                 >
                   <strong>{test.title}</strong> - {test.skill}

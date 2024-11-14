@@ -28,8 +28,8 @@ async function Navbar() {
     { label: "Thư viện đề thi Ielts", path: "/practice-libraries" },
     { label: "IELTS Tips", path: "/ielts-tips" },
     { label: "IELTS Preps", path: "/ielts-preps" },
-    { label: "Đăng ký giảng viên", path: "/booking" },
     { label: "Blog", path: "/blog" },
+    // { label: "Đăng ký làm giảng viên", path: "/instructor-registration" },
   ];
   return (
     <nav className="flex items-center w-full border-b bg-background">
@@ -44,7 +44,7 @@ async function Navbar() {
             <Link
               href={routes.path}
               key={routes.path}
-              className="py-2 text-sm font-semibold lg:text-base hover:text-primary"
+              className="font-semibold text-slate-700 lg:text-lg hover:text-primary/80"
             >
               {routes.label}
             </Link>

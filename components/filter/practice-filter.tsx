@@ -12,11 +12,11 @@ import {
 
 export default function PracticesFilter() {
   return (
-    <div className="flex items-center h-5 p-10 space-x-4 text-xl">
+    <div className="flex flex-col items-center justify-center p-2 space-y-4 text-xl bg-gray-100 rounded-lg sm:flex-row sm:space-x-4 sm:space-y-0">
       {/* Static button for ALL SKILLS */}
       <Button
         variant={"ghost"}
-        className="hover:bg-sky-300"
+        className="w-full hover:bg-sky-300 sm:w-auto"
         onClick={() =>
           (window.location.href = `/practice-libraries/filter/all-skills`)
         } // Ensures a full reload
@@ -27,7 +27,7 @@ export default function PracticesFilter() {
 
       <Button
         variant={"ghost"}
-        className="hover:bg-purple-300"
+        className="w-full hover:bg-purple-300 sm:w-auto"
         onClick={() =>
           (window.location.href = `/practice-libraries/filter/listening`)
         } // Ensures a full reload
@@ -38,7 +38,7 @@ export default function PracticesFilter() {
 
       <Button
         variant={"ghost"}
-        className="hover:bg-green-300"
+        className="w-full hover:bg-green-300 sm:w-auto"
         onClick={() =>
           (window.location.href = `/practice-libraries/filter/reading`)
         } // Ensures a full reload
@@ -49,7 +49,7 @@ export default function PracticesFilter() {
 
       <Button
         variant={"ghost"}
-        className="hover:bg-orange-200"
+        className="w-full hover:bg-orange-200 sm:w-auto"
         onClick={() =>
           (window.location.href = `/practice-libraries/filter/writing`)
         } // Ensures a full reload
@@ -60,7 +60,7 @@ export default function PracticesFilter() {
 
       <Button
         variant={"ghost"}
-        className="hover:bg-slate-300"
+        className="w-full hover:bg-slate-300 sm:w-auto"
         onClick={() =>
           (window.location.href = `/practice-libraries/filter/speaking`)
         } // Ensures a full reload

@@ -1,38 +1,42 @@
+// /app/api/ielts/search/route.ts
 import { NextResponse } from "next/server";
-import prisma from "@/lib/db"; 
+import prisma from "@/lib/db";
 
 export async function GET(request: Request) {
-  // Lấy query từ URL
-  const { searchParams } = new URL(request.url);
-  const title = searchParams.get("title")?.toLowerCase() || "";
+  const url = new URL(request.url);
+  const title = url.searchParams.get("title");
 
-  // Nếu không có tiêu đề để tìm kiếm, trả về một danh sách rỗng
   if (!title) {
     return NextResponse.json({ tests: [] });
   }
 
-  try {
-    // Tìm kiếm các bài luyện thi có tiêu đề khớp
-    const tests = await prisma.test.findMany({
-      where: {
-        title: {
-          contains: title,
-          mode: "insensitive", // Tìm kiếm không phân biệt hoa thường
-        },
-      },
-      select: {
-        id: true,
-        title: true,
-        skill: true,
-      },
-    });
+  const [listeningTests, readingTests, writingTests, speakingTests] =
+    await Promise.all([
+      prisma.listeningTest.findMany({
+        where: { title: { contains: title, mode: "insensitive" } },
+        select: { id: true, title: true },
+      }),
+      prisma.readingTest.findMany({
+        where: { title: { contains: title, mode: "insensitive" } },
+        select: { id: true, title: true },
+      }),
+      prisma.writingTest.findMany({
+        where: { title: { contains: title, mode: "insensitive" } },
+        select: { id: true, title: true },
+      }),
+      prisma.speakingTest.findMany({
+        where: { title: { contains: title, mode: "insensitive" } },
+        select: { id: true, title: true },
+      }),
+    ]);
 
-    return NextResponse.json({ tests });
-  } catch (error) {
-    console.error("Error fetching tests:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch tests" },
-      { status: 500 }
-    );
-  }
+  // Combine results and add skill label
+  const combinedResults = [
+    ...listeningTests.map((test) => ({ ...test, skill: "Listening" })),
+    ...readingTests.map((test) => ({ ...test, skill: "Reading" })),
+    ...writingTests.map((test) => ({ ...test, skill: "Writing" })),
+    ...speakingTests.map((test) => ({ ...test, skill: "Speaking" })),
+  ];
+
+  return NextResponse.json({ tests: combinedResults });
 }

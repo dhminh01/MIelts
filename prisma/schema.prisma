@@ -59,65 +59,110 @@ model VerificationToken {
   @@unique([email, token])
 }
 
-model Test {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  title       String        @unique // Tiêu đề bài thi
-  skill       Skill // Kỹ năng (Listening, Reading, Writing, Speaking)
-  sections    Section[] // Các phần của bài thi
+// ListeningTest model
+model ListeningTest {
+  id         String             @id @default(auto()) @map("_id") @db.ObjectId
+  title      String             @unique
+  sections   ListeningSection[]
+  isTimed    Boolean            @default(false)
+  transcript String? // Optional transcript displayed after test
+
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   TestHistory TestHistory[]
 }
 
-model Section {
-  id           String     @id @default(auto()) @map("_id") @db.ObjectId
-  sectionTitle String // Tiêu đề phần
-  description  String? // Miêu tả của từng phần
-  audioURL     String? // URL file audio cho phần này (nếu có, cho Listening)
-  imgUrl       String?
-  passage      String? // Đoạn văn đề bài của phần Reading
-  questions    Question[] // Các câu hỏi thuộc phần này
-  testId       String     @db.ObjectId
-  test         Test       @relation(fields: [testId], references: [id], onDelete: Cascade)
+// ListeningSection model
+model ListeningSection {
+  id           String              @id @default(auto()) @map("_id") @db.ObjectId
+  sectionTitle String
+  audioURL     String
+  questions    ListeningQuestion[]
+  testId       String              @db.ObjectId
+  test         ListeningTest       @relation(fields: [testId], references: [id], onDelete: Cascade)
 }
 
-model Question {
-  id            String       @id @default(auto()) @map("_id") @db.ObjectId
-  questionTitle String? // VD: Questions 1-10, 11-20
-  description   String? // VD: Choose ONE WORD AND/OR A NUMBER from the passage for each answer. Write your answers in boxes 21-26 on your answer sheet.
-  questionNum   Int
-  questionText  String // Đề bài
+// ListeningQuestion model
+model ListeningQuestion {
+  id            String           @id @default(auto()) @map("_id") @db.ObjectId
+  questionText  String
   type          QuestionType
-  answer        Json
+  answer        Json?
   correctAnswer String
-  sectionId     String       @db.ObjectId
-  section       Section      @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  Blank         Blank[]
+  sectionId     String           @db.ObjectId
+  section       ListeningSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
 }
 
-model Blank {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  questionId  String   @db.ObjectId
-  placeholder String // Ký hiệu cho chỗ trống
-  options     Json // Mảng các từ gợi ý cho chỗ trống
-  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+// ReadingTest model
+model ReadingTest {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  title    String    @unique
+  passages Passage[]
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  TestHistory TestHistory[]
 }
 
-//Test history
-model TestHistory {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String   @db.ObjectId
-  testId      String   @db.ObjectId
-  userAnswers Json
-  score       Float?
-  createdAt   DateTime @default(now())
-  skill       String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  test Test @relation(fields: [testId], references: [id], onDelete: Cascade)
+// Passage model for ReadingTest
+model Passage {
+  id           String            @id @default(auto()) @map("_id") @db.ObjectId
+  passageTitle String
+  content      String
+  questions    ReadingQuestion[]
+  testId       String            @db.ObjectId
+  test         ReadingTest       @relation(fields: [testId], references: [id], onDelete: Cascade)
 }
 
-//Tips for practicing Ielts
+// ReadingQuestion model
+model ReadingQuestion {
+  id                  String       @id @default(auto()) @map("_id") @db.ObjectId
+  questionDescription String
+  questionText        String
+  type                QuestionType
+  answer              Json?
+  correctAnswer       String
+  passageId           String       @db.ObjectId
+  passage             Passage      @relation(fields: [passageId], references: [id], onDelete: Cascade)
+}
+
+// WritingTest model
+model WritingTest {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  title         String @unique
+  prompt1       String // Task 1 prompt
+  prompt2       String // Task 2 prompt
+  wordLimit     Json // Example: {"task1": [150, 200], "task2": [250, 300]}
+  sampleAnswers Json?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  TestHistory TestHistory[]
+}
+
+// SpeakingTest model
+model SpeakingTest {
+  id               String             @id @default(auto()) @map("_id") @db.ObjectId
+  title            String             @unique
+  questions        SpeakingQuestion[]
+  timingGuidelines Json // Example: {"part1": "4-5 mins", "part2": "1-2 mins", "part3": "4-5 mins"}
+  topics           Json // List of common topics
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  TestHistory TestHistory[]
+}
+
+// SpeakingQuestion model
+model SpeakingQuestion {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId
+  questionText String
+  responseType ResponseType
+  testId       String       @db.ObjectId
+  test         SpeakingTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+}
+
+// IeltsTips model
 model IeltsTips {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   skill       Skill
@@ -128,6 +173,50 @@ model IeltsTips {
   updatedAt   DateTime @updatedAt
 }
 
+model TestHistory {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @db.ObjectId
+  listeningTestId String?  @db.ObjectId
+  readingTestId   String?  @db.ObjectId
+  writingTestId   String?  @db.ObjectId
+  speakingTestId  String?  @db.ObjectId
+  score           Float // Store the score (could be out of 9 or other scale)
+  userAnswers     Json // Store the user's answers as JSON (for example, multiple choice or text answers)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Relations to specific test types (optional, depending on which test was taken)
+  listeningTest ListeningTest? @relation(fields: [listeningTestId], references: [id], onDelete: Cascade)
+  readingTest   ReadingTest?   @relation(fields: [readingTestId], references: [id], onDelete: Cascade)
+  writingTest   WritingTest?   @relation(fields: [writingTestId], references: [id], onDelete: Cascade)
+  speakingTest  SpeakingTest?  @relation(fields: [speakingTestId], references: [id], onDelete: Cascade)
+}
+
+model InstructorRequest {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  email          String   @unique
+  password       String // Store as hashed password
+  ieltsProofPath String // Store file path or URL to IELTS proof document
+  status         String   @default("PENDING") // Status: PENDING, APPROVED, REJECTED
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Instructor {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  dob         DateTime
+  phone       String
+  hometown    String
+  address     String
+  idCardImage String
+  createdAt   DateTime @default(now())
+}
+
+// Enumerations
 enum ROLE {
   ADMIN
   INSTRUCTOR
@@ -145,4 +234,9 @@ enum QuestionType {
   FILL_IN_THE_BLANK
   MULTIPLE_CHOICE
   SHORT_ANSWER
+}
+
+enum ResponseType {
+  TEXT
+  AUDIO
 }
