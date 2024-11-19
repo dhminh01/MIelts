@@ -5,7 +5,6 @@ import { FormSuccess } from "@/components/form-success";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ROLE } from "@prisma/client";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export const AdminPage = () => {
@@ -56,15 +55,27 @@ export const AdminPage = () => {
         </div>
         <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
           <p className="font-medium ">Tạo bài luyện thi Reading</p>
-          <Button onClick={() => router.push("")}>Click Here</Button>
+          <Button
+            onClick={() => router.push("/admin/tests/create-reading-test")}
+          >
+            Click Here
+          </Button>
         </div>
         <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
           <p className="font-medium ">Tạo bài luyện thi Writing</p>
-          <Button onClick={() => router.push("")}>Click Here</Button>
+          <Button
+            onClick={() => router.push("/admin/tests/create-writing-test")}
+          >
+            Click Here
+          </Button>
         </div>
         <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
           <p className="font-medium ">Tạo bài luyện thi Speaking</p>
-          <Button onClick={() => router.push("")}>Click Here</Button>
+          <Button
+            onClick={() => router.push("/admin/tests/create-speaking-test")}
+          >
+            Click Here
+          </Button>
         </div>
       </CardContent>
     </Card>

@@ -117,10 +117,11 @@ model Passage {
 // ReadingQuestion model
 model ReadingQuestion {
   id                  String       @id @default(auto()) @map("_id") @db.ObjectId
-  questionDescription String
+  questionTitle       String?
+  questionDescription String?
   questionText        String
   type                QuestionType
-  answer              Json?
+  answer              Json? // MULTIPLE_CHOICE: {"options":"option":"A","content":"A reason that contributes to light pollution."} or FILL_IN_THE_BLANK: {}
   correctAnswer       String
   passageId           String       @db.ObjectId
   passage             Passage      @relation(fields: [passageId], references: [id], onDelete: Cascade)
@@ -128,12 +129,18 @@ model ReadingQuestion {
 
 // WritingTest model
 model WritingTest {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  title         String @unique
-  prompt1       String // Task 1 prompt
-  prompt2       String // Task 2 prompt
-  wordLimit     Json // Example: {"task1": [150, 200], "task2": [250, 300]}
-  sampleAnswers Json?
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  title             String  @unique
+  task1Title        String
+  task2Title        String
+  task1_description String
+  task2_description String
+  task1_imageURL    String?
+  task2_imageURL    String?
+  task1_word_limit  Int?
+  task2_word_limit  Int?
+  task1_answer      String? // For user's answer
+  task2_answer      String? // For user's answer
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt

@@ -90,3 +90,71 @@ export const InstructorRegistrationSchema = z.object({
       "IELTS proof is required"
     ),
 });
+
+export const ListeningTestSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  isTimed: z.boolean(),
+  transcript: z.string().optional(),
+  sections: z.array(
+    z.object({
+      sectionTitle: z.string().min(1, "Section title is required"),
+      audioFile: z.any(), // This will be handled by multer or alternative upload handling
+      questions: z.array(
+        z.object({
+          questionText: z.string().min(1, "Question text is required"),
+          type: z.enum([
+            "MULTIPLE_CHOICE",
+            "FILL_IN_THE_BLANK",
+            "SHORT_ANSWER",
+          ]),
+          answer: z
+            .object({
+              options: z
+                .array(
+                  z.object({
+                    label: z.string().min(1),
+                    option: z.string().min(1),
+                  })
+                )
+                .optional(),
+            })
+            .optional(),
+          correctAnswer: z.string().min(1, "Correct answer is required"),
+        })
+      ),
+    })
+  ),
+});
+
+// Define Zod schema for validation
+export const ReadingTestSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  passages: z.array(
+    z.object({
+      passageTitle: z.string().min(1, "Passage title is required!"),
+      content: z.string().min(1, "Passage content is required!"),
+      questions: z.array(
+        z.object({
+          questionTitle: z.string().optional(),
+          questionDescription: z.string().optional(),
+          questionText: z.string().min(1, "Question text is required"),
+          type: z.enum(["MULTIPLE_CHOICE", "FILL_IN_THE_BLANK"]),
+          answer: z
+            .object({
+              options: z
+                .array(
+                  z.object({
+                    label: z.string().optional(),
+                    content: z.string().optional(),
+                  })
+                )
+                .optional(),
+            })
+            .optional(),
+          correctAnswer: z.string().min(1, "Correct answer is required"),
+        })
+      ),
+    })
+  ),
+});
+

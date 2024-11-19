@@ -1,44 +1,8 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db"; // Prisma client
-import { z } from "zod";
 import fs from "fs";
 import path from "path";
-
-// Zod schema for validation
-const ListeningTestSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  isTimed: z.boolean(),
-  transcript: z.string().optional(),
-  sections: z.array(
-    z.object({
-      sectionTitle: z.string().min(1, "Section title is required"),
-      audioFile: z.any(), // This will be handled by multer or alternative upload handling
-      questions: z.array(
-        z.object({
-          questionText: z.string().min(1, "Question text is required"),
-          type: z.enum([
-            "MULTIPLE_CHOICE",
-            "FILL_IN_THE_BLANK",
-            "SHORT_ANSWER",
-          ]),
-          answer: z
-            .object({
-              options: z
-                .array(
-                  z.object({
-                    label: z.string().min(1),
-                    option: z.string().min(1),
-                  })
-                )
-                .optional(),
-            })
-            .optional(),
-          correctAnswer: z.string().min(1, "Correct answer is required"),
-        })
-      ),
-    })
-  ),
-});
+import { ListeningTestSchema } from "@/schemas";
 
 // Handle POST request
 export async function POST(req: Request) {
@@ -103,6 +67,6 @@ export async function POST(req: Request) {
       test: createdTest,
     });
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json({ error }, { status: 400 });
   }
 }

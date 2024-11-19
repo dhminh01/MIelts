@@ -46,6 +46,7 @@ const ReadingTestDetails = ({ params }) => {
   };
 
   const handleSubmit = async () => {
+    console.log("User answers:", userAnswers);
     const response = await fetch("/api/ielts/submit", {
       method: "POST",
       headers: {
@@ -97,15 +98,16 @@ const ReadingTestDetails = ({ params }) => {
 
       {test.passages.map((passage) => (
         <div key={passage.id} className="pt-4 mb-6 border-t-2">
-          <h3 className="text-xl font-semibold">Passage</h3>
+          <h3 className="text-xl font-semibold">{passage.passageTitle}</h3>
           <p className="text-lg text-gray-700">{passage.content}</p>
 
           <ul className="pl-5 mt-4 space-y-4 list-disc">
             {passage.questions.map((question) => (
               <li key={question.id} className="my-4">
                 <div className="font-medium">
-                  <span>Question {question.questionNum}:</span>{" "}
-                  {question.questionText}
+                  <span>{question.questionTitle}</span>{" "}
+                  {question.questionDescription}
+                  <p>Question: {question.questionText}</p>
                 </div>
 
                 {question.type === "MULTIPLE_CHOICE" && (
@@ -125,7 +127,8 @@ const ReadingTestDetails = ({ params }) => {
                           checked={userAnswers[question.id] === option.label}
                           className="mr-2"
                         />
-                        <span className="text-lg">{option.label}</span>
+                        <span className="text-lg">{option.label} </span>
+                        <span>{option.content}</span>
                         {option.imageUrl && (
                           <img
                             src={option.imageUrl}

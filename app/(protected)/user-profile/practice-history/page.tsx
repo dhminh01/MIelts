@@ -3,6 +3,7 @@
 "use server"; // Ensure this file is using server actions
 
 import { fetchHistory } from "@/actions/fetchHistory";
+import Link from "next/link";
 
 export default async function UserProfile() {
   // Call the server action to fetch history
@@ -47,7 +48,13 @@ export default async function UserProfile() {
                 </td>
                 <td className="p-2 border border-gray-300">{item.score}</td>
                 <td className="p-2 border border-gray-300">
-                  <pre>{JSON.stringify(item.userAnswers, null, 2)}</pre>
+                  {/* Link to user answers page */}
+                  <Link
+                    href={`/user-answers/${item.id}`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    View Answers
+                  </Link>
                 </td>
               </tr>
             ))}
