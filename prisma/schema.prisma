@@ -23,9 +23,11 @@ model User {
   accounts      Account[]
   role          ROLE?     @default(USER)
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  TestHistory TestHistory[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  TestHistory    TestHistory[]
+  callsInitiated VideoCall[]   @relation("caller") // User as the caller
+  callsReceived  VideoCall[]   @relation("receiver") // User as the receiver
 }
 
 model Account {
@@ -187,7 +189,7 @@ model TestHistory {
   readingTestId   String?  @db.ObjectId
   writingTestId   String?  @db.ObjectId
   speakingTestId  String?  @db.ObjectId
-  score           Float // Store the score (could be out of 9 or other scale)
+  score           Float? // Store the score (could be out of 9 or other scale)
   userAnswers     Json // Store the user's answers as JSON (for example, multiple choice or text answers)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -223,6 +225,19 @@ model Instructor {
   createdAt   DateTime @default(now())
 }
 
+model VideoCall {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  callerId   String     @db.ObjectId
+  receiverId String     @db.ObjectId
+  status     CallStatus @default(PENDING) // Enum: PENDING, ONGOING, ENDED
+  startTime  DateTime?
+  endTime    DateTime?
+  createdAt  DateTime   @default(now())
+
+  caller   User @relation("caller", fields: [callerId], references: [id])
+  receiver User @relation("receiver", fields: [receiverId], references: [id])
+}
+
 // Enumerations
 enum ROLE {
   ADMIN
@@ -246,4 +261,10 @@ enum QuestionType {
 enum ResponseType {
   TEXT
   AUDIO
+}
+
+enum CallStatus {
+  PENDING
+  ONGOING
+  ENDED
 }

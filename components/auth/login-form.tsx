@@ -21,8 +21,11 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { login } from "@/actions/login";
+import { useRouter } from "next/navigation";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
 export const LoginForm = () => {
+  const router = useRouter();
   const [error, setError] = useState<string | undefined>(undefined);
   const [success, setSuccess] = useState<string | undefined>(undefined);
   const [isPending, startTransition] = useTransition();
@@ -35,14 +38,19 @@ export const LoginForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    setError("");
+  const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+    setError(""); // Reset error and success messages before submission
     setSuccess("");
 
+    // Start the login process
     startTransition(() => {
       login(values).then((data) => {
-        setError(data?.error);
-        setSuccess(data?.success);
+        if (data?.error) {
+          setError(data.error); // Set error if login fails
+        } else {
+          // setSuccess(data.success); // Set success if login is successful
+          router.push(DEFAULT_LOGIN_REDIRECT); // Redirect after successful login
+        }
       });
     });
   };
@@ -99,10 +107,11 @@ export const LoginForm = () => {
                 )}
               />
             </div>
-            <FormError message={error} />
-            <FormSuccess message={success} />
+            {/* Display error or success message if applicable */}
+            {error && <FormError message={error} />}
+            {/* {success && <FormSuccess message={success} />} */}
             <Button disabled={isPending} type="submit" className="w-full">
-              Đăng nhập
+              {isPending ? "Đang đăng nhập..." : "Đăng nhập"}
             </Button>
           </form>
         </Form>

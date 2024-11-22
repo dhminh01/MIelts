@@ -35,15 +35,15 @@ export const AdminPage = () => {
         </div> */}
         <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
           <p className="font-medium">Quản lý tài khoản người dùng</p>
-          <Button onClick={() => router.push("")}>Click Here</Button>
-        </div>
-        <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
-          <p className="font-medium ">Quản lý tài khoản giảng viên</p>
-          <Button onClick={() => router.push("")}>Click Here</Button>
+          <Button onClick={() => router.push("/admin/accounts/user-accounts")}>
+            Click Here
+          </Button>
         </div>
         <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
           <p className="font-medium ">Quản lý bài luyện thi</p>
-          <Button onClick={() => router.push("")}>Click Here</Button>
+          <Button onClick={() => router.push("/admin/tests/manage-tests")}>
+            Click Here
+          </Button>
         </div>
         <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
           <p className="font-medium ">Tạo bài luyện thi Listening</p>
