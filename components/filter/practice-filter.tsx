@@ -16,23 +16,23 @@ export default function PracticesFilter() {
       {/* Static button for ALL SKILLS */}
       <Button
         variant={"ghost"}
-        className="w-full hover:bg-sky-300 sm:w-auto"
+        className="w-full hover:bg-slate-300 sm:w-auto"
         onClick={() =>
           (window.location.href = `/practice-libraries/filter/all-skills`)
         } // Ensures a full reload
       >
-        <Home size={"30px"} className="pr-2" />
+        <Home size={"36px"} />
         ALL SKILLS
       </Button>
 
       <Button
         variant={"ghost"}
-        className="w-full hover:bg-purple-300 sm:w-auto"
+        className="w-full hover:bg-blue-200 sm:w-auto"
         onClick={() =>
           (window.location.href = `/practice-libraries/filter/listening`)
         } // Ensures a full reload
       >
-        <BookHeadphones size={"30px"} className="pr-2" />
+        <BookHeadphones size={"36px"} />
         LISTENING
       </Button>
 
@@ -43,7 +43,7 @@ export default function PracticesFilter() {
           (window.location.href = `/practice-libraries/filter/reading`)
         } // Ensures a full reload
       >
-        <BookOpenText size={"30px"} className="pr-2" />
+        <BookOpenText size={"36px"} />
         READING
       </Button>
 
@@ -54,18 +54,18 @@ export default function PracticesFilter() {
           (window.location.href = `/practice-libraries/filter/writing`)
         } // Ensures a full reload
       >
-        <PenTool size={"30px"} className="pr-2" />
+        <PenTool size={"36px"} />
         WRITING
       </Button>
 
       <Button
         variant={"ghost"}
-        className="w-full hover:bg-slate-300 sm:w-auto"
+        className="w-full hover:bg-purple-200 sm:w-auto"
         onClick={() =>
           (window.location.href = `/practice-libraries/filter/speaking`)
         } // Ensures a full reload
       >
-        <MicVocal size={"30px"} className="pr-2" />
+        <MicVocal size={"36px"} />
         SPEAKING
       </Button>
     </div>

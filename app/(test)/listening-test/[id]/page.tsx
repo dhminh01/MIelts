@@ -40,7 +40,7 @@ const TestDetails = ({ params }) => {
     // Submit the answers to the server or process them as needed
     console.log("User answers:", userAnswers);
     // Example: Send user answers to API
-    const response = await fetch("/api/ielts/submit", {
+    const response = await fetch("/api/ielts/listening-test/submit", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

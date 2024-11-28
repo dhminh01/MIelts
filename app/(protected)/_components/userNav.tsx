@@ -50,14 +50,6 @@ export const UserProfileNavbar = () => {
           History
         </Button>
         <Button
-          onClick={() => handleNavigation("/user-profile/my-wallet")}
-          variant={
-            pathname === "/user-profile/my-wallet" ? "default" : "outline"
-          }
-        >
-          Wallet
-        </Button>
-        <Button
           onClick={() => handleNavigation("/user-profile/meeting")}
           variant={pathname === "/user-profile/meeting" ? "default" : "outline"}
         >
