@@ -1,6 +1,6 @@
 "use client";
 
-import { UserButton } from "@/components/auth/user-button";
+// import { UserButton } from "@/components/auth/user-button";
 import { Button } from "@/components/ui/button";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import { ROLE } from "@prisma/client";
@@ -50,10 +50,10 @@ export const UserProfileNavbar = () => {
           History
         </Button>
         <Button
-          onClick={() => handleNavigation("/user-profile/meeting")}
-          variant={pathname === "/user-profile/meeting" ? "default" : "outline"}
+          onClick={() => handleNavigation("/user-profile/payment")}
+          variant={pathname === "/user-profile/payment" ? "default" : "outline"}
         >
-          Meeting
+          Payment
         </Button>
         {role === ROLE.ADMIN && (
           <Button

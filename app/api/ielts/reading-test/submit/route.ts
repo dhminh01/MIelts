@@ -16,15 +16,11 @@ export async function POST(request: Request) {
 
     const userId = session.user.id;
 
-    // Try fetching the ListeningTest
-    let test;
-    let skill: "LISTENING" = "LISTENING"; // Default to LISTENING
-
-    // First, try to fetch a ListeningTest
-    test = await prisma.listeningTest.findUnique({
+    // Try fetching a ReadingTest
+    let test = await prisma.readingTest.findUnique({
       where: { id: testId },
       include: {
-        sections: {
+        passages: {
           include: {
             questions: true,
           },
@@ -36,13 +32,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Test not found" }, { status: 404 });
     }
 
-    // Extract correct answers from the ListeningTest
-    let correctAnswers: (string | null)[] = [];
-    if (skill === "LISTENING") {
-      correctAnswers = test.sections.flatMap((section) =>
-        section.questions.map((question) => question.correctAnswer)
-      );
-    }
+    // Extract correct answers from the test
+    const correctAnswers = test.passages.flatMap((passage) =>
+      passage.questions.map((question) => question.correctAnswer)
+    );
 
     // Ensure user answers are in the same format
     const userAnswersArray = Object.keys(userAnswers).map(
@@ -56,26 +49,27 @@ export async function POST(request: Request) {
       );
     }
 
-    // Calculate score
+    // Calculate score based on the number of correct answers
     let correctCount = 0;
     userAnswersArray.forEach((answer, index) => {
-      // Compare user answers with correct answers
       if (answer === correctAnswers[index]) {
         correctCount++;
       }
     });
 
-    // Map the correct count to the appropriate score based on the given scale
+    // Calculate score based on predefined score brackets
     let score = 0;
-    if (correctCount < 11) score = 0;
+    if (correctCount < 6) score = 0;
+    else if (correctCount >= 6 && correctCount <= 7) score = 3.0;
+    else if (correctCount >= 8 && correctCount <= 10) score = 3.5;
     else if (correctCount >= 11 && correctCount <= 12) score = 4.0;
-    else if (correctCount >= 13 && correctCount <= 15) score = 4.5;
-    else if (correctCount >= 16 && correctCount <= 17) score = 5.0;
-    else if (correctCount >= 18 && correctCount <= 22) score = 5.5;
-    else if (correctCount >= 23 && correctCount <= 25) score = 6.0;
-    else if (correctCount >= 26 && correctCount <= 29) score = 6.5;
-    else if (correctCount >= 30 && correctCount <= 31) score = 7.0;
-    else if (correctCount >= 32 && correctCount <= 34) score = 7.5;
+    else if (correctCount >= 13 && correctCount <= 14) score = 4.5;
+    else if (correctCount >= 15 && correctCount <= 18) score = 5.0;
+    else if (correctCount >= 19 && correctCount <= 22) score = 5.5;
+    else if (correctCount >= 23 && correctCount <= 26) score = 6.0;
+    else if (correctCount >= 27 && correctCount <= 29) score = 6.5;
+    else if (correctCount >= 30 && correctCount <= 32) score = 7.0;
+    else if (correctCount >= 33 && correctCount <= 34) score = 7.5;
     else if (correctCount >= 35 && correctCount <= 36) score = 8.0;
     else if (correctCount >= 37 && correctCount <= 38) score = 8.5;
     else if (correctCount >= 39 && correctCount <= 40) score = 9.0;
@@ -84,11 +78,11 @@ export async function POST(request: Request) {
     await prisma.testHistory.create({
       data: {
         userId,
-        score: score, // Store the calculated score
+        score, // Store the calculated score
         userAnswers: userAnswersArray, // Store answers as an array
         createdAt: new Date(),
         updatedAt: new Date(),
-        listeningTestId: test.id, // Store the testId dynamically based on skill
+        readingTestId: test.id, // Store the testId for the ReadingTest
       },
     });
 

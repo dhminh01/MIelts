@@ -25,6 +25,7 @@ export async function fetchUserAnswers(id: string) {
           },
         },
         writingTest: true, // Include writingTest if needed
+        speakingTest: true, // Include speakingTest (assuming it has fields like title, description, and audioURL)
       },
     });
 
@@ -65,6 +66,14 @@ export async function fetchUserAnswers(id: string) {
         }
       : null;
 
+    // For Speaking Test, include title, description, and answer with audio URL (if available)
+    const speakingAnswers = historyItem.speakingTest
+      ? {
+          title: historyItem.speakingTest.title || "No title",
+          audioURL: historyItem.audioURL || null, // Store the audio URL for playback
+        }
+      : null;
+
     return {
       listening: {
         user_answer: userAnswers.slice(0, correctListeningAnswers.length),
@@ -75,6 +84,7 @@ export async function fetchUserAnswers(id: string) {
         correct_answer: correctReadingAnswers,
       },
       writing: writingAnswers, // Return writing answers
+      speaking: speakingAnswers, // Return speaking answers
     };
   } catch (error) {
     console.error("Error fetching user answers:", error);

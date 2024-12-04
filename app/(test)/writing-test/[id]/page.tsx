@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react"; // If using NextAuth.js for user sessions
+import { Button } from "@/components/ui/button";
+import { LoginButton } from "@/components/auth/login-button";
 
 const TestDetails = ({ params }) => {
-  const { data: session } = useSession(); // Session will contain user data
+  const { data: session, status } = useSession(); // Session will contain user data
   const [test, setTest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState("");
@@ -15,25 +17,29 @@ const TestDetails = ({ params }) => {
   const { id } = params; // Get test ID from URL params
 
   useEffect(() => {
-    // Fetch the test data for the given ID
-    const fetchTest = async () => {
-      try {
-        const response = await fetch(`/api/ielts/showWritingTest?id=${id}`);
-        if (response.ok) {
-          const data = await response.json();
-          setTest(data.test);
-        } else {
-          console.error("Failed to fetch test details");
+    if (status === "authenticated") {
+      // Fetch the test data for the given ID
+      const fetchTest = async () => {
+        try {
+          const response = await fetch(`/api/ielts/showWritingTest?id=${id}`);
+          if (response.ok) {
+            const data = await response.json();
+            setTest(data.test);
+          } else {
+            console.error("Failed to fetch test details");
+          }
+        } catch (error) {
+          console.error("Error fetching test data:", error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error fetching test data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchTest();
-  }, [id]);
+      fetchTest();
+    } else {
+      setLoading(false);
+    }
+  }, [id, status]);
 
   const handleInputChange = (task, value) => {
     setUserAnswers((prev) => ({
@@ -70,7 +76,23 @@ const TestDetails = ({ params }) => {
   };
 
   if (loading) return <div>Loading...</div>;
-  if (!test) return <div>Test not found.</div>;
+
+  if (status === "unauthenticated") {
+    return (
+      <div className="py-10 text-center">
+        <p className="mb-4 text-2xl font-semibold">
+          Bạn phải đăng nhập để xem nội dung này.
+        </p>
+        <Button>
+          <LoginButton>
+            <p>Đăng nhập</p>
+          </LoginButton>
+        </Button>
+      </div>
+    );
+  }
+
+  if (!test) return <div className="py-10 text-center">Test not found.</div>;
 
   return (
     <div className="container p-6 mx-auto">

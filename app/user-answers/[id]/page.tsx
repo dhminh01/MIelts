@@ -197,6 +197,35 @@ export default async function UserAnswers({ params }: UserAnswerProps) {
             </div>
           </div>
         )}
+
+        {/* Speaking Test Results */}
+        {userAnswers.speaking && (
+          <div className="p-6 bg-white rounded-lg shadow-lg">
+            <h3 className="text-xl font-semibold text-slate-600">
+              Speaking Test
+            </h3>
+            <div className="mt-4">
+              <h4 className="text-lg font-semibold text-slate-700">
+                {userAnswers.speaking.title || "No title"}
+              </h4>
+
+              <div className="p-4 mt-6 border-2 border-gray-300 rounded-md bg-gray-50">
+                <p className="text-xl font-bold text-gray-800">User Answer: </p>
+                {userAnswers.speaking.audioURL && (
+                  <div className="mt-4">
+                    <audio
+                      controls
+                      src={userAnswers.speaking.audioURL}
+                      className="w-full"
+                    >
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
