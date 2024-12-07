@@ -1,4 +1,3 @@
-// actions/fetchUserAnswers.ts
 import prisma from "@/lib/db";
 
 export async function fetchUserAnswers(id: string) {
@@ -10,7 +9,7 @@ export async function fetchUserAnswers(id: string) {
           include: {
             sections: {
               include: {
-                questions: true, // Include all questions in the sections
+                questions: true, // Include Listening questions
               },
             },
           },
@@ -19,58 +18,72 @@ export async function fetchUserAnswers(id: string) {
           include: {
             passages: {
               include: {
-                questions: true, // Include all questions in the passages
+                questions: true, // Include Reading questions
               },
             },
           },
         },
-        writingTest: true, // Include writingTest if needed
-        speakingTest: true, // Include speakingTest (assuming it has fields like title, description, and audioURL)
+        writingTest: true, // Include Writing test if needed
+        speakingTest: {
+          include: {
+            SpeakingPart: {
+              include: {
+                SpeakingQuestion: true, // Include Speaking questions
+              },
+            },
+          },
+        },
+        comments: true, // Include comments
       },
     });
 
     if (!historyItem) {
-      return null; // Return null if history item not found
+      return null;
     }
 
-    // Check if userAnswers is a string and split it if necessary
     const userAnswers = Array.isArray(historyItem.userAnswers)
       ? historyItem.userAnswers
       : typeof historyItem.userAnswers === "string"
-      ? historyItem.userAnswers.split(",") // If it's a string, split it into an array
+      ? historyItem.userAnswers.split(",")
       : [];
 
-    // Extract correct answers from the listening test's questions
     const correctListeningAnswers =
       historyItem.listeningTest?.sections.flatMap((section) =>
         section.questions.map((question) => question.correctAnswer)
       ) || [];
 
-    // Extract correct answers from the reading test's questions
     const correctReadingAnswers =
       historyItem.readingTest?.passages.flatMap((passage) =>
         passage.questions.map((question) => question.correctAnswer)
       ) || [];
 
-    // For Writing Test, we don't have correct answers, so just return user answers
+    const speakingParts =
+      historyItem.speakingTest?.SpeakingPart.map((part) => ({
+        partTitle: part.title,
+        partDescription: part.description,
+        questions: part.SpeakingQuestion.map((question) => ({
+          questionText: question.questionText,
+        })),
+      })) || [];
+
+    const speakingAnswers = historyItem.speakingTest
+      ? {
+          title: historyItem.speakingTest.title || "No title",
+          audioURL: historyItem.audioURL || null,
+        }
+      : null;
+
     const writingAnswers = historyItem.writingTest
       ? {
+          title: historyItem.writingTest.title,
           task1: historyItem.userAnswers.task1 || "No answer provided",
           task2: historyItem.userAnswers.task2 || "No answer provided",
           task1Title: historyItem.writingTest.task1Title,
           task2Title: historyItem.writingTest.task2Title,
-          task1_description: historyItem.writingTest.task1_description,
-          task2_description: historyItem.writingTest.task2_description,
-          task1_imageURL: historyItem.writingTest.task1_imageURL,
-          task2_imageURL: historyItem.writingTest.task2_imageURL,
-        }
-      : null;
-
-    // For Speaking Test, include title, description, and answer with audio URL (if available)
-    const speakingAnswers = historyItem.speakingTest
-      ? {
-          title: historyItem.speakingTest.title || "No title",
-          audioURL: historyItem.audioURL || null, // Store the audio URL for playback
+          task1Description: historyItem.writingTest.task1_description,
+          task2Description: historyItem.writingTest.task2_description,
+          task1ImageURL: historyItem.writingTest.task1_imageURL,
+          task2ImageURL: historyItem.writingTest.task2_imageURL,
         }
       : null;
 
@@ -83,8 +96,12 @@ export async function fetchUserAnswers(id: string) {
         user_answer: userAnswers.slice(correctListeningAnswers.length),
         correct_answer: correctReadingAnswers,
       },
-      writing: writingAnswers, // Return writing answers
-      speaking: speakingAnswers, // Return speaking answers
+      speaking: {
+        answer: speakingAnswers,
+        parts: speakingParts,
+      },
+      writing: writingAnswers,
+      comments: historyItem.comments || [],
     };
   } catch (error) {
     console.error("Error fetching user answers:", error);

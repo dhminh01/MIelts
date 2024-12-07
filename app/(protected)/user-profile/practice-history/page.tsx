@@ -58,7 +58,7 @@ export default async function UserProfile() {
                   <td className="p-3 border border-gray-300">{item.score}</td>
                   <td className="p-3 border border-gray-300">
                     <Link
-                      href={`/user-answers/${item.id}`}
+                      href={`/user-answers/listening-test/${item.id}`}
                       className="text-blue-600 hover:underline"
                     >
                       View Answers
@@ -106,7 +106,7 @@ export default async function UserProfile() {
                   <td className="p-3 border border-gray-300">{item.score}</td>
                   <td className="p-3 border border-gray-300">
                     <Link
-                      href={`/user-answers/${item.id}`}
+                      href={`/user-answers/reading-test/${item.id}`}
                       className="text-blue-600 hover:underline"
                     >
                       View Answers
@@ -154,7 +154,7 @@ export default async function UserProfile() {
                   <td className="p-3 border border-gray-300">{item.score}</td>
                   <td className="p-3 border border-gray-300">
                     <Link
-                      href={`/user-answers/${item.id}`}
+                      href={`/user-answers/writing-test/${item.id}`}
                       className="text-blue-600 hover:underline"
                     >
                       View Answers
@@ -202,7 +202,7 @@ export default async function UserProfile() {
                   <td className="p-3 border border-gray-300">{item.score}</td>
                   <td className="p-3 border border-gray-300">
                     <Link
-                      href={`/user-answers/${item.id}`}
+                      href={`/user-answers/speaking-test/${item.id}`}
                       className="text-blue-600 hover:underline"
                     >
                       View Answers

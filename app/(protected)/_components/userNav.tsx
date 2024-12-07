@@ -53,7 +53,7 @@ export const UserProfileNavbar = () => {
           onClick={() => handleNavigation("/user-profile/payment")}
           variant={pathname === "/user-profile/payment" ? "default" : "outline"}
         >
-          Payment
+          Wallet
         </Button>
         {role === ROLE.ADMIN && (
           <Button
@@ -61,6 +61,20 @@ export const UserProfileNavbar = () => {
             variant={pathname === "/user-profile/admin" ? "default" : "outline"}
           >
             Admin
+          </Button>
+        )}
+        {role === ROLE.INSTRUCTOR && (
+          <Button
+            onClick={() =>
+              handleNavigation("/user-profile/instructor/user-requests")
+            }
+            variant={
+              pathname === "/user-profile/instructor/user-requests"
+                ? "default"
+                : "outline"
+            }
+          >
+            User Requests
           </Button>
         )}
       </div>

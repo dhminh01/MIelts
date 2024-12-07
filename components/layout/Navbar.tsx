@@ -28,7 +28,7 @@ async function Navbar() {
     { label: "Thư viện đề thi Ielts", path: "/practice-libraries" },
     { label: "IELTS Tips", path: "/ielts-tips" },
     { label: "IELTS Preps", path: "/ielts-preps" },
-    { label: "Blog", path: "/blog" },
+    { label: "Diễn Đàn", path: "/forum" },
     // { label: "Đăng ký làm giảng viên", path: "/instructor-registration" },
   ];
   return (

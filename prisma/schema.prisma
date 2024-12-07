@@ -29,6 +29,9 @@ model User {
   // callsInitiated VideoCall[]   @relation("caller") // User as the caller
   // callsReceived  VideoCall[]   @relation("receiver") // User as the receiver
   UserWallet  UserWallet[]
+
+  RequestInfo RequestInfo[]
+  RequestFee  RequestFee[]
 }
 
 model Account {
@@ -152,24 +155,31 @@ model WritingTest {
 
 // SpeakingTest model
 model SpeakingTest {
-  id               String             @id @default(auto()) @map("_id") @db.ObjectId
-  title            String             @unique
-  questions        SpeakingQuestion[]
-  timingGuidelines Json // Example: {"part1": "4-5 mins", "part2": "1-2 mins", "part3": "4-5 mins"}
-  topics           Json // List of common topics
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  title String @unique
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  TestHistory TestHistory[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  TestHistory  TestHistory[]
+  SpeakingPart SpeakingPart[]
+}
+
+model SpeakingPart {
+  id               String             @id @default(auto()) @map("_id") @db.ObjectId
+  title            String //Part 1: , Part2: , ...
+  description      String //Example: his part is about yourself,...
+  testId           String             @db.ObjectId
+  test             SpeakingTest       @relation(fields: [testId], references: [id], onDelete: Cascade)
+  SpeakingQuestion SpeakingQuestion[]
 }
 
 // SpeakingQuestion model
 model SpeakingQuestion {
   id           String       @id @default(auto()) @map("_id") @db.ObjectId
   questionText String
-  responseType ResponseType
-  testId       String       @db.ObjectId
-  test         SpeakingTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  responseType ResponseType @default(AUDIO)
+  partId       String       @db.ObjectId
+  part         SpeakingPart @relation(fields: [partId], references: [id], onDelete: Cascade)
 }
 
 // IeltsTips model
@@ -200,24 +210,37 @@ model TestHistory {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Relations to specific test types (optional, depending on which test was taken)
-  listeningTest  ListeningTest?   @relation(fields: [listeningTestId], references: [id], onDelete: Cascade)
-  readingTest    ReadingTest?     @relation(fields: [readingTestId], references: [id], onDelete: Cascade)
-  writingTest    WritingTest?     @relation(fields: [writingTestId], references: [id], onDelete: Cascade)
-  speakingTest   SpeakingTest?    @relation(fields: [speakingTestId], references: [id], onDelete: Cascade)
+  listeningTest ListeningTest? @relation(fields: [listeningTestId], references: [id], onDelete: Cascade)
+  readingTest   ReadingTest?   @relation(fields: [readingTestId], references: [id], onDelete: Cascade)
+  writingTest   WritingTest?   @relation(fields: [writingTestId], references: [id], onDelete: Cascade)
+  speakingTest  SpeakingTest?  @relation(fields: [speakingTestId], references: [id], onDelete: Cascade)
 }
 
-//User request for grading purpose
+//User request models for grading purpose
 
+model RequestFee {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  instructorId String   @db.ObjectId
+  speakingFee  Float    @default(0.0)
+  writingFee   Float    @default(0.0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-model InstructorRequest {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  name           String
-  email          String   @unique
-  password       String // Store as hashed password
-  ieltsProofPath String // Store file path or URL to IELTS proof document
-  status         String   @default("PENDING") // Status: PENDING, APPROVED, REJECTED
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  instructor User @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+}
+
+model RequestInfo {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String @db.ObjectId
+  testHistoryId String @unique
+  instructorId  String
+
+  status    RequestStatus @default(PENDING) // Trạng thái yêu cầu (PENDING, ACCEPTED, DECLINED)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  // Các mối quan hệ
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Instructor {
@@ -272,9 +295,9 @@ model Comment {
   content       String
   authorName    String
   authorEmail   String
-  postId        String       @db.ObjectId
+  postId        String?      @db.ObjectId
   testHistoryId String?      @db.ObjectId
-  post          BlogPost     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post          BlogPost?    @relation(fields: [postId], references: [id], onDelete: Cascade)
   TestHistory   TestHistory? @relation(fields: [testHistoryId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())

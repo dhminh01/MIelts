@@ -5,7 +5,8 @@ import { auth } from "@/auth";
 export async function POST(request: Request) {
   const { testId, audioURL } = await request.json();
 
-  console.log("Received request body:", { testId, audioURL }); // Log the request body for debugging
+  // Log the request body for debugging (can be removed in production)
+  console.log("Received request body:", { testId, audioURL });
 
   try {
     // Check if testId and audioURL are provided
@@ -54,7 +55,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error saving test history:", error);
     return NextResponse.json(
-      { error: "Failed to save test history" },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }

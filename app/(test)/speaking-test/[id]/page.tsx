@@ -1,27 +1,28 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation"; // Import router
 import { useSession } from "next-auth/react";
-import { FaMicrophone, FaPause, FaStop } from "react-icons/fa"; // Import microphone icons
+import { FaMicrophone, FaPause, FaStop } from "react-icons/fa";
 
 const SpeakingTestPage = ({ params }: { params: { id: string } }) => {
-  const { id } = params; // Test ID from URL params
-  const { status } = useSession(); // Session status
+  const { id } = params;
+  const { status } = useSession();
+  const router = useRouter(); // Router for navigation
   const [test, setTest] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // Recording-related states and refs
+  const [currentPart, setCurrentPart] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [audioURL, setAudioURL] = useState<string | null>(null);
-  const [timeElapsed, setTimeElapsed] = useState(0); // Time elapsed in seconds
+  const [audioURLs, setAudioURLs] = useState<string[]>([]);
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [message, setMessage] = useState<string | null>(null); // Message state
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]); // For storing audio data
-  const intervalRef = useRef<NodeJS.Timeout | null>(null); // Interval for updating time elapsed
+  const audioChunksRef = useRef<Blob[]>([]);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    console.log("Params:", params); // Log the params to check
     const fetchTest = async () => {
       try {
         const response = await fetch(`/api/ielts/showSpeakingTest?id=${id}`);
@@ -40,14 +41,18 @@ const SpeakingTestPage = ({ params }: { params: { id: string } }) => {
     };
 
     fetchTest();
-  }, [id, params]);
+  }, [id]);
+
+  const showMessage = (msg: string) => {
+    setMessage(msg);
+    setTimeout(() => setMessage(null), 3000);
+  };
 
   const handleStartRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
-
       audioChunksRef.current = [];
 
       mediaRecorder.ondataavailable = (event) => {
@@ -62,7 +67,6 @@ const SpeakingTestPage = ({ params }: { params: { id: string } }) => {
           type: "audio/mp3",
         });
 
-        // Save to public/save_audio
         const formData = new FormData();
         formData.append("audio", audioFile);
 
@@ -73,21 +77,24 @@ const SpeakingTestPage = ({ params }: { params: { id: string } }) => {
 
         if (response.ok) {
           const data = await response.json();
-          setAudioURL(data.audioPath);
-          alert("Recording saved successfully!");
+          setAudioURLs((prev) => {
+            const updatedAudioURLs = [...prev];
+            updatedAudioURLs[currentPart] = data.audioPath;
+            return updatedAudioURLs;
+          });
+          showMessage("Save audio successfully!");
         } else {
-          alert("Error saving recording.");
+          showMessage("Error saving audio.");
         }
       };
 
       mediaRecorder.start();
       setIsRecording(true);
       setIsPaused(false);
-      setTimeElapsed(0); // Reset the timer when starting a new recording
+      setTimeElapsed(0);
 
-      // Start the timer
       intervalRef.current = setInterval(() => {
-        setTimeElapsed((prevTime) => prevTime + 1); // Increment time each second
+        setTimeElapsed((prevTime) => prevTime + 1);
       }, 1000);
     } catch (err) {
       console.error("Error accessing microphone:", err);
@@ -102,17 +109,13 @@ const SpeakingTestPage = ({ params }: { params: { id: string } }) => {
       if (isPaused) {
         mediaRecorderRef.current.resume();
         setIsPaused(false);
-        // Restart the timer
         intervalRef.current = setInterval(() => {
-          setTimeElapsed((prevTime) => prevTime + 1); // Continue incrementing time
+          setTimeElapsed((prevTime) => prevTime + 1);
         }, 1000);
       } else {
         mediaRecorderRef.current.pause();
         setIsPaused(true);
-        // Stop the timer
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-        }
+        if (intervalRef.current) clearInterval(intervalRef.current);
       }
     }
   };
@@ -122,21 +125,18 @@ const SpeakingTestPage = ({ params }: { params: { id: string } }) => {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
       setIsPaused(false);
-      // Stop the timer
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     }
   };
 
   const handleSubmitRecording = async () => {
-    if (audioURL) {
+    if (audioURLs[currentPart]) {
       const testHistoryData = {
-        userId: status === "authenticated" ? "user-id" : "", // Replace with actual user ID
-        testId: id, // Use 'testId' here, not 'id'
-        audioURL: audioURL, // Path to the saved audio
+        userId: status === "authenticated" ? "user-id" : "",
+        testId: id,
+        audioURL: audioURLs[currentPart],
         userAnswers: JSON.stringify({
-          response: "User's recorded answer here", // Replace with actual answers
+          response: "User's recorded answer here",
         }),
       };
 
@@ -150,125 +150,123 @@ const SpeakingTestPage = ({ params }: { params: { id: string } }) => {
         });
 
         if (response.ok) {
-          const data = await response.json();
-          alert("Test history saved successfully!");
+          showMessage("Save test to history!");
+          setTimeout(() => {
+            router.push("/user-profile/practice-history");
+          }, 2000); // Redirect after 2 seconds
         } else {
-          alert("Error saving test history.");
+          showMessage("Error saving test history.");
         }
       } catch (err) {
         console.error("Error saving test history:", err);
-        alert("Error saving test history.");
+        showMessage("Error saving test history.");
       }
     }
   };
-  const formatTime = (timeInSeconds: number) => {
-    const minutes = Math.floor(timeInSeconds / 60);
-    const seconds = timeInSeconds % 60;
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
     return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
   };
 
+  const handlePreviousPart = () => {
+    if (currentPart > 0) setCurrentPart(currentPart - 1);
+  };
+
+  const handleNextPart = () => {
+    if (test && currentPart < test.SpeakingPart.length - 1)
+      setCurrentPart(currentPart + 1);
+  };
+
   if (loading) return <div>Loading...</div>;
+  if (error) return <div className="text-red-500">Error: {error}</div>;
+  if (!test) return <div>Speaking test not found.</div>;
 
-  if (error) {
-    return <div className="text-red-500">Error: {error}</div>;
-  }
-
-  if (!test) {
-    return <div>Speaking test not found.</div>;
-  }
+  const currentSpeakingPart = test.SpeakingPart[currentPart];
 
   return (
     <div className="container py-10 mx-auto">
       <h1 className="mb-6 text-3xl font-bold">{test.title}</h1>
-
-      {/* Display timing guidelines */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold">Timing Guidelines</h2>
-        <ul className="pl-5 mt-2 list-disc">
-          {Object.entries(test.timingGuidelines).map(([part, timing]) => (
-            <li key={part}>
-              <strong>{part}:</strong> {timing}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Display common topics */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold">Common Topics</h2>
-        <ul className="pl-5 mt-2 list-disc">
-          {test.topics.map((topic: string, index: number) => (
-            <li key={index}>{topic}</li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Display questions */}
+      {message && (
+        <div className="p-4 mb-4 text-white bg-green-500 rounded">
+          {message}
+        </div>
+      )}
       <div>
-        <h2 className="mb-4 text-2xl font-semibold">Questions</h2>
-        <ul className="pl-5 list-disc">
-          {test.questions.map((question: any) => (
-            <li key={question.id} className="mb-4">
-              <p>{question.questionText}</p>
-              <p>
-                <strong>Response Type:</strong> {question.responseType}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Recording functionality */}
-      <div className="mt-10">
-        <h2 className="mb-4 text-2xl font-semibold">Record Your Answer</h2>
-        <div className="flex gap-4">
-          <button
-            onClick={handleStartRecording}
-            disabled={isRecording}
-            className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600 disabled:bg-gray-400"
-          >
-            <FaMicrophone size={24} />
-          </button>
-          <button
-            onClick={handlePauseRecording}
-            disabled={!isRecording}
-            className="px-4 py-2 text-white bg-yellow-500 rounded hover:bg-yellow-600 disabled:bg-gray-400"
-          >
-            {isPaused ? <FaMicrophone size={24} /> : <FaPause size={24} />}
-          </button>
-          <button
-            onClick={handleStopRecording}
-            disabled={!isRecording}
-            className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 disabled:bg-gray-400"
-          >
-            <FaStop size={24} />
-          </button>
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold">
+            Part {currentPart + 1}: {currentSpeakingPart.title}
+          </h3>
+          <p className="italic">{currentSpeakingPart.description}</p>
+          <ul className="pl-5 mt-4 list-decimal">
+            {currentSpeakingPart.SpeakingQuestion.map((question: any) => (
+              <li key={question.id} className="mb-4">
+                <p>{question.questionText}</p>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* Recording time */}
         <div className="mt-6">
-          <div className="mb-2 text-lg font-semibold">
-            Recording Time: {formatTime(timeElapsed)}
-          </div>
+          {isRecording ? (
+            <button
+              className="px-4 py-2 text-white bg-red-500 rounded"
+              onClick={handleStopRecording}
+            >
+              <FaStop className="inline-block mr-2" />
+              Stop Recording
+            </button>
+          ) : (
+            <button
+              className="px-4 py-2 text-white bg-blue-500 rounded"
+              onClick={handleStartRecording}
+              disabled={audioURLs[currentPart] !== undefined}
+            >
+              <FaMicrophone className="inline-block mr-2" />
+              Start Recording
+            </button>
+          )}
+          {isRecording && (
+            <button
+              className="px-4 py-2 ml-4 text-white bg-yellow-500 rounded"
+              onClick={handlePauseRecording}
+            >
+              <FaPause className="inline-block mr-2" />
+              {isPaused ? "Resume" : "Pause"}
+            </button>
+          )}
+          <p className="mt-2 text-sm text-gray-600">
+            Time elapsed: {formatTime(timeElapsed)}
+          </p>
         </div>
 
-        {audioURL && (
-          <div className="mt-4">
-            <p className="font-semibold text-green-500">Audio Recorded!</p>
-            <audio controls src={audioURL}></audio>
-          </div>
-        )}
-      </div>
+        <div className="mt-6">
+          <button
+            className="px-4 py-2 mr-4 text-black bg-gray-300 rounded"
+            onClick={handlePreviousPart}
+            disabled={currentPart === 0}
+          >
+            Previous Part
+          </button>
+          <button
+            className="px-4 py-2 text-black bg-gray-300 rounded"
+            onClick={handleNextPart}
+            disabled={currentPart === test.SpeakingPart.length - 1}
+          >
+            Next Part
+          </button>
+        </div>
 
-      {/* Submit button */}
-      <div className="mt-6">
-        <button
-          onClick={handleSubmitRecording}
-          disabled={!audioURL}
-          className="px-6 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 disabled:bg-gray-400"
-        >
-          Submit Answer
-        </button>
+        <div className="mt-6">
+          <button
+            className="px-4 py-2 text-white bg-green-500 rounded"
+            onClick={handleSubmitRecording}
+            disabled={audioURLs.every((url) => url === undefined)}
+          >
+            Submit
+          </button>
+        </div>
       </div>
     </div>
   );

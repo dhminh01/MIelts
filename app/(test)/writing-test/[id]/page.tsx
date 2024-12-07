@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react"; // If using NextAuth.js for user sessions
 import { Button } from "@/components/ui/button";
 import { LoginButton } from "@/components/auth/login-button";
+import { useRouter } from "next/navigation";
 
 const TestDetails = ({ params }) => {
   const { data: session, status } = useSession(); // Session will contain user data
@@ -15,6 +16,7 @@ const TestDetails = ({ params }) => {
     task2_answer: "",
   }); // To store the user's answers for task1 and task2
   const { id } = params; // Get test ID from URL params
+  const router = useRouter();
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -67,6 +69,9 @@ const TestDetails = ({ params }) => {
       const result = await response.json();
       console.log("Submit result:", result);
       setNotification("Your answers have been successfully submitted!");
+      setTimeout(() => {
+        router.push("/user-profile/practice-history");
+      }, 1000);
     } else {
       console.error("Error submitting answers");
       setNotification(

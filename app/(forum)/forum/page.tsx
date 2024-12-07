@@ -126,7 +126,7 @@ export default function BlogPage() {
   return (
     <div className="max-w-4xl p-4 mx-auto">
       <h1 className="mb-6 text-3xl font-bold text-center text-slate-600">
-        ~~~ Blog ~~~
+        ~~~ Diễn đàn trao đổi ~~~
       </h1>
       <div className="flex justify-center mb-6">
         <Button

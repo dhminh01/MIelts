@@ -19,7 +19,12 @@ export async function GET(request: Request) {
     const test = await prisma.speakingTest.findUnique({
       where: { id },
       include: {
-        questions: true,
+        SpeakingPart: {
+          // Ensure this matches the relation in your Prisma schema
+          include: {
+            SpeakingQuestion: true, // Include the associated SpeakingQuestions for each part
+          },
+        },
       },
     });
 
