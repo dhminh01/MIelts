@@ -47,11 +47,11 @@ export default async function UserAnswers({ params }: UserAnswerProps) {
                 {userAnswers.writing.task1Title || "No title"}
               </h4>
               <h4 className="text-sm text-slate-500">
-                {userAnswers.writing.task1_description || "No description"}
+                {userAnswers.writing.task1Description || "No description"}
               </h4>
-              {userAnswers.writing.task1_imageURL && (
+              {userAnswers.writing.task1ImageURL && (
                 <img
-                  src={userAnswers.writing.task1_imageURL}
+                  src={userAnswers.writing.task1ImageURL}
                   alt="Task 1 image"
                   className="w-3/4 h-auto mx-auto mb-4 rounded-md shadow-sm"
                 />
@@ -68,11 +68,11 @@ export default async function UserAnswers({ params }: UserAnswerProps) {
                 {userAnswers.writing.task2Title || "No title"}
               </h4>
               <h4 className="text-sm text-slate-500">
-                {userAnswers.writing.task2_description || "No description"}
+                {userAnswers.writing.task2Description || "No description"}
               </h4>
-              {userAnswers.writing.task2_imageURL && (
+              {userAnswers.writing.task2ImageURL && (
                 <img
-                  src={userAnswers.writing.task2_imageURL}
+                  src={userAnswers.writing.task2ImageURL}
                   alt="Task 2 image"
                   className="w-3/4 h-auto mx-auto mb-4 rounded-md shadow-sm"
                 />

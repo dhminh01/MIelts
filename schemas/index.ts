@@ -1,14 +1,14 @@
-import { ROLE } from "@prisma/client";
+// import { ROLE } from "@prisma/client";
 import * as z from "zod";
 
 export const SettingsSchema = z
   .object({
     name: z.optional(z.string()),
     email: z.optional(z.string()),
-    role: z.enum([ROLE.ADMIN, ROLE.USER, ROLE.INSTRUCTOR]),
+    // role: z.enum([ROLE.ADMIN, ROLE.USER, ROLE.INSTRUCTOR]),
     password: z.optional(z.string().min(6)),
     newPassword: z.optional(z.string().min(6)),
-    image: z.string().url().optional(),
+    image: z.string().optional(),
   })
   .refine(
     (data) => {
@@ -98,7 +98,7 @@ export const ListeningTestSchema = z.object({
   sections: z.array(
     z.object({
       sectionTitle: z.string().min(1, "Section title is required"),
-      audioFile: z.any(), // This will be handled by multer or alternative upload handling
+      audioURL: z.any(), // This will be handled by multer or alternative upload handling
       questions: z.array(
         z.object({
           questionText: z.string().min(1, "Question text is required"),
@@ -157,4 +157,3 @@ export const ReadingTestSchema = z.object({
     })
   ),
 });
-

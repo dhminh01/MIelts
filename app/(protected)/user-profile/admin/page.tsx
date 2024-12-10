@@ -40,13 +40,24 @@ export const AdminPage = () => {
           </Button>
         </div>
         <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
+          <p className="font-medium ">Danh sách đăng ký giảng viên</p>
+          <Button
+            onClick={() => router.push("/admin/accounts/instructor-register")}
+          >
+            Click Here
+          </Button>
+        </div>
+        <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
           <p className="font-medium ">Quản lý bài luyện thi</p>
           <Button onClick={() => router.push("/admin/tests/manage-tests")}>
             Click Here
           </Button>
         </div>
         <div className="flex flex-row items-center justify-between p-3 border rounded-lg shadow-md">
-          <p className="font-medium ">Quản lý request chấm điểm WRITING, SPEAKING từ người dùng và giảng viên</p>
+          <p className="font-medium ">
+            Quản lý request chấm điểm WRITING, SPEAKING từ người dùng và giảng
+            viên
+          </p>
           <Button onClick={() => router.push("/admin/manage-request")}>
             Click Here
           </Button>

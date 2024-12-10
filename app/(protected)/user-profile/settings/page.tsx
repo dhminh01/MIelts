@@ -59,9 +59,11 @@ const SettingsPage = () => {
   });
 
   const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
+    console.log("Form Submitted", values);
     startTransition(() => {
       settings(values)
         .then((data) => {
+          console.log(data);
           if (data.error) {
             setError(data.error);
           }
@@ -81,7 +83,6 @@ const SettingsPage = () => {
       setImagePreview(URL.createObjectURL(file));
     }
   };
-
 
   return (
     <Card className="w-full">
@@ -127,11 +128,12 @@ const SettingsPage = () => {
                   </FormItem>
                 )}
               />
-              <FormItem>
+              {/* <FormItem>
                 <FormLabel>Profile Image</FormLabel>
                 <FormControl>
                   <Input
                     type="file"
+                    name="image"
                     accept="image/*"
                     onChange={handleImageChange}
                     disabled={isPending}
@@ -144,7 +146,7 @@ const SettingsPage = () => {
                     className="object-cover w-32 h-32 mt-2 rounded-full"
                   />
                 )}
-              </FormItem>
+              </FormItem> */}
               {user?.isOAuth === false && (
                 <>
                   <FormField

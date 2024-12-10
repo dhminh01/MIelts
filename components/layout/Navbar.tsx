@@ -82,7 +82,7 @@ async function Navbar() {
                 <DropdownMenuItem className="flex items-center justify-center">
                   <IoHelpCircleOutline className="w-4 h-4 mr-2" />
                   <Link
-                    href={"/frequently-asked-questions/about-us"}
+                    href={"/frequently-asked-questions"}
                     className="p-2"
                     replace
                   >

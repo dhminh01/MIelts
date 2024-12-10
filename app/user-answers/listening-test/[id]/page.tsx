@@ -46,7 +46,9 @@ export default async function UserAnswers({ params }: UserAnswerProps) {
                   {userAnswers.listening.user_answer.map((answer, index) => {
                     const correctAnswer =
                       userAnswers.listening.correct_answer[index];
-                    const isCorrect = answer.trim() === correctAnswer?.trim();
+                    const isCorrect =
+                      answer.trim().toLowerCase() ===
+                      correctAnswer?.trim().toLowerCase();
                     return (
                       <tr
                         key={index}

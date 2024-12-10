@@ -9,6 +9,7 @@ interface RequestInfo {
   userId: string;
   testHistoryId: string;
   status: string;
+  createdAt: string; // Added createdAt property
 }
 
 interface UserInfo {
@@ -191,10 +192,10 @@ const UserRequestPage = () => {
                 <div className="font-semibold">
                   User Name: {name[request.userId] || "Unknown"}
                 </div>
-                {/* <div className="text-gray-500">
-                  Test History ID: {request.testHistoryId}
-                </div> */}
                 <div className="text-gray-600">Status: {request.status}</div>
+                <div className="text-gray-500">
+                  Thời gian: {new Date(request.createdAt).toLocaleString()}
+                </div>
 
                 {/* Accept/Decline Buttons */}
                 {request.status === "PENDING" && (
@@ -266,17 +267,18 @@ const UserRequestPage = () => {
                             Submit Comment
                           </button>
                         </div>
-                        <label className="block mt-4">Score (out of 9):</label>
+                        <label className="block mt-4 mb-2 font-semibold text-gray-700">
+                          Change Test Score:
+                        </label>
                         <input
                           type="number"
-                          value={updatedScore ?? ""}
-                          min={0}
-                          max={9}
+                          value={updatedScore || ""}
                           onChange={handleScoreChange}
-                          className="p-2 mb-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="p-2 mb-2 border rounded"
+                          placeholder="Enter updated score"
                         />
                         <button
-                          className="px-4 py-2 mt-2 text-white bg-blue-500 rounded-sm hover:bg-blue-600 "
+                          className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
                           onClick={() =>
                             submitScoreUpdate(request.id, request.testHistoryId)
                           }

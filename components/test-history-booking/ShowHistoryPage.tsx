@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 interface SpeakingAnswer {
   title: string;
-  audioURL: string;
+  answer: string;
   transcript: string;
   parts?: Array<{
     partTitle: string;
@@ -13,13 +13,14 @@ interface SpeakingAnswer {
 }
 
 interface WritingAnswer {
+  title: string;
   task1Title: string;
-  task1_description: string;
-  task1_imageURL: string;
+  task1Description: string;
+  task1ImageURL: string;
   task1: string;
   task2Title: string;
-  task2_description: string;
-  task2_imageURL: string;
+  task2Description: string;
+  task2ImageURL: string;
   task2: string;
 }
 
@@ -83,7 +84,9 @@ const UserAnswersByTestHistory = ({ testHistoryId }: Props) => {
             <h3 className="text-xl font-semibold text-slate-600">
               Writing Test
             </h3>
-            <h2>{userAnswers.writing.title}</h2>
+            <h2 className="font-bold text-slate-600">
+              {userAnswers.writing.title}
+            </h2>
             {/* Writing Test Content */}
             <div className="mt-4">
               <h4 className="text-lg font-semibold text-slate-700">

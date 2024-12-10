@@ -1,163 +1,185 @@
 "use client";
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-
-const registrationSchema = z.object({
-  name: z.string().min(1, "Tên không được để trống"),
-  dob: z.string().min(1, "Ngày sinh không được để trống"),
-  phone: z.string().min(1, "Số điện thoại không được để trống"),
-  hometown: z.string().min(1, "Quê quán không được để trống"),
-  address: z.string().min(1, "Địa chỉ không được để trống"),
-  idCardImage: z
-    .instanceof(File)
-    .refine((file) => file.size < 5 * 1024 * 1024, "File phải nhỏ hơn 5MB"),
-  ieltsProof: z
-    .instanceof(File)
-    .refine((file) => file.size < 5 * 1024 * 1024, "File phải nhỏ hơn 5MB"),
-});
-
-type FormData = z.infer<typeof registrationSchema>;
+import { useState } from "react";
 
 const InstructorRegistrationForm = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(registrationSchema),
+  const [formData, setFormData] = useState({
+    name: "",
+    dob: "",
+    phone: "",
+    hometown: "",
+    address: "",
+    idCardImage: "",
+    certProof: "",
   });
 
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [ieltsFile, setIeltsFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const onSubmit = async (data: FormData) => {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("dob", data.dob);
-    formData.append("phone", data.phone);
-    formData.append("hometown", data.hometown);
-    formData.append("address", data.address);
-    if (selectedFile) formData.append("idCardImage", selectedFile);
-    if (ieltsFile) formData.append("ieltsProof", ieltsFile);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-    // Send the form data to the backend
-    const response = await fetch("/api/instructor-registration", {
-      method: "POST",
-      body: formData,
-    });
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    const { name } = e.target;
 
-    const result = await response.json();
-    console.log(result);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: reader.result as string,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    try {
+      const response = await fetch("/api/instructor/registration", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const { error } = await response.json();
+        throw new Error(error || "Something went wrong");
+      }
+
+      setSuccessMessage("Instructor registration successful!");
+      setFormData({
+        name: "",
+        dob: "",
+        phone: "",
+        hometown: "",
+        address: "",
+        idCardImage: "",
+        certProof: "",
+      });
+    } catch (error: any) {
+      setErrorMessage(error.message || "Failed to submit form");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-lg p-6 mx-auto space-y-6 bg-white rounded-lg shadow-lg">
-      <h2 className="mb-6 text-2xl font-bold text-center">Đăng ký Giảng viên</h2>
-
-      <div className="space-y-4">
-        <div>
-          <label htmlFor="name" className="block text-sm font-semibold text-gray-700">
-            Họ và Tên
-          </label>
-          <input
-            {...register("name")}
-            type="text"
-            id="name"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="dob" className="block text-sm font-semibold text-gray-700">
-            Ngày sinh
-          </label>
-          <input
-            {...register("dob")}
-            type="date"
-            id="dob"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {errors.dob && <p className="text-sm text-red-500">{errors.dob.message}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="phone" className="block text-sm font-semibold text-gray-700">
-            Số điện thoại
-          </label>
-          <input
-            {...register("phone")}
-            type="text"
-            id="phone"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {errors.phone && <p className="text-sm text-red-500">{errors.phone.message}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="hometown" className="block text-sm font-semibold text-gray-700">
-            Quê quán
-          </label>
-          <input
-            {...register("hometown")}
-            type="text"
-            id="hometown"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {errors.hometown && <p className="text-sm text-red-500">{errors.hometown.message}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="address" className="block text-sm font-semibold text-gray-700">
-            Địa chỉ thường trú
-          </label>
-          <input
-            {...register("address")}
-            type="text"
-            id="address"
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {errors.address && <p className="text-sm text-red-500">{errors.address.message}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="idCardImage" className="block text-sm font-semibold text-gray-700">
-            Chứng minh thư nhân dân
-          </label>
-          <input
-            {...register("idCardImage")}
-            type="file"
-            accept="image/*"
-            onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {errors.idCardImage && <p className="text-sm text-red-500">{errors.idCardImage.message}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="ieltsProof" className="block text-sm font-semibold text-gray-700">
-            Chứng chỉ IELTS
-          </label>
-          <input
-            {...register("ieltsProof")}
-            type="file"
-            accept="image/*, application/pdf"
-            onChange={(e) => setIeltsFile(e.target.files?.[0] || null)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {errors.ieltsProof && <p className="text-sm text-red-500">{errors.ieltsProof.message}</p>}
-        </div>
-
-        <button
-          type="submit"
-          className="w-full p-3 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Đăng ký
-        </button>
+    <form className="space-y-4" onSubmit={handleSubmit}>
+      <div>
+        <label className="block text-sm font-medium">Name</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          className="w-full px-3 py-2 border rounded"
+          required
+        />
       </div>
+      <div>
+        <label className="block text-sm font-medium">Date of Birth</label>
+        <input
+          type="date"
+          name="dob"
+          value={formData.dob}
+          onChange={handleChange}
+          className="w-full px-3 py-2 border rounded"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium">Phone</label>
+        <input
+          type="text"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+          className="w-full px-3 py-2 border rounded"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium">Hometown</label>
+        <input
+          type="text"
+          name="hometown"
+          value={formData.hometown}
+          onChange={handleChange}
+          className="w-full px-3 py-2 border rounded"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium">Address</label>
+        <textarea
+          name="address"
+          value={formData.address}
+          onChange={handleChange}
+          className="w-full px-3 py-2 border rounded"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium">ID Card Image</label>
+        <input
+          type="file"
+          name="idCardImage"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="block w-full"
+          required
+        />
+        {formData.idCardImage && (
+          <img
+            src={formData.idCardImage}
+            alt="ID Preview"
+            className="w-auto h-20 mt-2"
+          />
+        )}
+      </div>
+      <div>
+        <label className="block text-sm font-medium">Certification Proof</label>
+        <input
+          type="file"
+          name="certProof"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="block w-full"
+          required
+        />
+        {formData.certProof && (
+          <img
+            src={formData.certProof}
+            alt="Certification Proof Preview"
+            className="w-auto h-20 mt-2"
+          />
+        )}
+      </div>
+      <button
+        type="submit"
+        className="w-full px-4 py-2 text-white bg-blue-500 rounded disabled:opacity-50"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? "Submitting..." : "Register"}
+      </button>
+      {successMessage && (
+        <p className="mt-2 text-green-500">{successMessage}</p>
+      )}
+      {errorMessage && <p className="mt-2 text-red-500">{errorMessage}</p>}
     </form>
   );
 };

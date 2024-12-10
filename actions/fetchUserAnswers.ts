@@ -68,7 +68,7 @@ export async function fetchUserAnswers(id: string) {
 
     const speakingAnswers = historyItem.speakingTest
       ? {
-          title: historyItem.speakingTest.title || "No title",
+        title: historyItem.speakingTest.title || "No title",
           audioURL: historyItem.audioURL || null,
         }
       : null;

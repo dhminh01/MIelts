@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     let correctCount = 0;
     userAnswersArray.forEach((answer, index) => {
       // Compare user answers with correct answers
-      if (answer === correctAnswers[index]) {
+      if (answer.toLowerCase() === correctAnswers[index]?.toLowerCase()) {
         correctCount++;
       }
     });

@@ -24,7 +24,7 @@ model User {
   role          ROLE?     @default(USER)
 
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  updatedAt   DateTime
   TestHistory TestHistory[]
   // callsInitiated VideoCall[]   @relation("caller") // User as the caller
   // callsReceived  VideoCall[]   @relation("receiver") // User as the receiver
@@ -232,7 +232,7 @@ model RequestFee {
 model RequestInfo {
   id            String @id @default(auto()) @map("_id") @db.ObjectId
   userId        String @db.ObjectId
-  testHistoryId String @unique
+  testHistoryId String
   instructorId  String
 
   status    RequestStatus @default(PENDING) // Trạng thái yêu cầu (PENDING, ACCEPTED, DECLINED)
@@ -244,15 +244,17 @@ model RequestInfo {
 }
 
 model Instructor {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   dob         DateTime
   phone       String
   hometown    String
   address     String
   idCardImage String
-  createdAt   DateTime @default(now())
+  certProof   String
+  createdAt   DateTime    @default(now())
 }
+
 
 //User wallet
 model UserWallet {

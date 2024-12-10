@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     // Calculate score based on the number of correct answers
     let correctCount = 0;
     userAnswersArray.forEach((answer, index) => {
-      if (answer === correctAnswers[index]) {
+      if (answer.toLowerCase() === correctAnswers[index].toLowerCase()) {
         correctCount++;
       }
     });

@@ -104,14 +104,14 @@ const TestDetails = ({ params }) => {
       <h1 className="mb-8 text-4xl font-semibold">{test.title}</h1>
 
       {/* Task 1 */}
-      <div className="mb-10">
+      <div className="mb-10 ">
         <h2 className="mb-4 text-2xl font-bold">{test.task1Title}</h2>
         <p className="mb-4">{test.task1_description}</p>
         {test.task1_imageURL && (
           <img
             src={test.task1_imageURL}
             alt="Task 1 image"
-            className="w-full h-auto mb-4"
+            className="h-auto mb-4 w-90"
           />
         )}
         <p>
@@ -137,7 +137,7 @@ const TestDetails = ({ params }) => {
           <img
             src={test.task2_imageURL}
             alt="Task 2 image"
-            className="w-full h-auto mb-4"
+            className="h-auto mb-4 w-90"
           />
         )}
         <p>

@@ -1,4 +1,3 @@
-// API route for creating a request to review a writing test
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db"; // Adjust this path based on your project structure
 import { auth } from "@/auth";
@@ -27,13 +26,27 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create the requestInfo record
+    // Check if there's an existing request for this test history
+    const existingRequest = await prisma.requestInfo.findFirst({
+      where: { testHistoryId, userId },
+    });
+
+    // If a request exists and the status is "DECLINED", update the status to "PENDING"
+    if (existingRequest && existingRequest.status === "DECLINED") {
+      const updatedRequest = await prisma.requestInfo.update({
+        where: { id: existingRequest.id },
+        data: { status: "PENDING", instructorId }, // Update the status and instructorId if necessary
+      });
+      return NextResponse.json(updatedRequest, { status: 200 });
+    }
+
+    // If no request exists, create a new one with status "PENDING"
     const requestInfo = await prisma.requestInfo.create({
       data: {
         userId,
         testHistoryId,
-        instructorId, // Add instructorId to the requestInfo
-        status: "PENDING",
+        instructorId,
+        status: "PENDING", // Default status is PENDING
       },
     });
 

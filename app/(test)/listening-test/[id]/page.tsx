@@ -4,20 +4,19 @@ import { LoginButton } from "@/components/auth/login-button";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter for navigation
+import { useRouter } from "next/navigation";
 
 const TestDetails = ({ params }) => {
-  const { data: session, status } = useSession(); // Check user session
+  const { data: session, status } = useSession();
   const [test, setTest] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [userAnswers, setUserAnswers] = useState({}); // To store the user's answers
-  const [notification, setNotification] = useState(""); // For displaying regular notification
-  const { id } = params; // Get test ID from URL params
-  const [selectedSectionIndex, setSelectedSectionIndex] = useState(0); // Track selected section
-  const router = useRouter(); // Initialize useRouter
+  const [userAnswers, setUserAnswers] = useState({});
+  const [notification, setNotification] = useState("");
+  const { id } = params;
+  const [selectedSectionIndex, setSelectedSectionIndex] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
-    // Fetch the test data for the given ID
     if (status === "authenticated") {
       const fetchTest = async () => {
         try {
@@ -49,9 +48,6 @@ const TestDetails = ({ params }) => {
   };
 
   const handleSubmit = async () => {
-    // Submit the answers to the server or process them as needed
-    console.log("User answers:", userAnswers);
-    // Example: Send user answers to API
     const response = await fetch("/api/ielts/listening-test/submit", {
       method: "POST",
       headers: {
@@ -68,7 +64,6 @@ const TestDetails = ({ params }) => {
       console.log("Submit result:", result);
       setNotification("Your answers have been successfully submitted!");
 
-      // After 2 seconds, redirect to the practice history page
       setTimeout(() => {
         router.push("/user-profile/practice-history");
       }, 1000);
@@ -82,7 +77,6 @@ const TestDetails = ({ params }) => {
 
   if (loading) return <div>Loading...</div>;
 
-  // Show login prompt if the user is not authenticated
   if (status === "unauthenticated") {
     return (
       <div className="py-10 text-center">
@@ -104,14 +98,17 @@ const TestDetails = ({ params }) => {
     <div className="container py-10 mx-auto">
       <h1 className="mb-6 text-4xl font-bold">{test.title}</h1>
 
-      {/* Display selected section */}
       <div>
         {test.sections[selectedSectionIndex] && (
           <div className="mb-6">
             <h2 className="text-xl font-bold">
               {test.sections[selectedSectionIndex].sectionTitle}
             </h2>
-            <audio controls className="w-full my-4">
+            <audio
+              controls
+              className="w-full my-4"
+              key={test.sections[selectedSectionIndex].audioURL} // Key ensures the element updates
+            >
               <source
                 src={test.sections[selectedSectionIndex].audioURL}
                 type="audio/mpeg"
@@ -124,7 +121,6 @@ const TestDetails = ({ params }) => {
                 <li key={question.id} className="my-2">
                   <strong>Question {question.questionNum}:</strong>{" "}
                   {question.questionText}
-                  {/* Render input for user answer based on question type */}
                   {question.type === "MULTIPLE_CHOICE" && (
                     <div className="mt-4 space-y-2">
                       {question.answer?.options.map((option, index) => (
@@ -178,9 +174,7 @@ const TestDetails = ({ params }) => {
         )}
       </div>
 
-      {/* Section navigation buttons at the bottom */}
       <div className="flex justify-between p-4">
-        {/* Previous Section Button */}
         <Button
           onClick={() => {
             if (selectedSectionIndex > 0) {
@@ -193,7 +187,6 @@ const TestDetails = ({ params }) => {
           Previous Section
         </Button>
 
-        {/* Next Section Button */}
         <Button
           onClick={() => {
             if (selectedSectionIndex < test.sections.length - 1) {
@@ -216,7 +209,6 @@ const TestDetails = ({ params }) => {
         </button>
       </div>
 
-      {/* Regular notification message */}
       {notification && (
         <div className="mt-6 text-xl text-center text-green-600">
           <p>{notification}</p>

@@ -48,6 +48,11 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
     values.password = hashedPassword;
     values.newPassword = undefined;
   }
+  if (values.image) {
+    // Upload image to server or cloud storage, then save the image path
+    const imagePath = await uploadImage(imageFile);
+    values.image = imagePath;
+  }
 
   await prisma.user.update({
     where: { id: dbUser.id },

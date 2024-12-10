@@ -20,10 +20,12 @@ export default function InstructorList({
   requestStatus,
 }: InstructorListProps) {
   const [showInstructors, setShowInstructors] = useState(false);
+  const [instructorList, setInstructorList] = useState(instructors);
 
   const handleRequestReview = async (instructorId: string) => {
     try {
-      if (requestStatus) {
+      // If the request status is "DECLINED", allow re-requesting
+      if (requestStatus && requestStatus !== "DECLINED") {
         alert("You have already requested a review for this test.");
         return;
       }
@@ -31,7 +33,11 @@ export default function InstructorList({
       const response = await fetch("/api/request-review", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ instructorId, testHistoryId }), // Include instructorId in the body
+        body: JSON.stringify({
+          instructorId,
+          testHistoryId,
+          requestStatus: requestStatus === "DECLINED" ? "PENDING" : undefined, // If it's declined, reset it to PENDING
+        }),
       });
 
       if (!response.ok) {
@@ -39,6 +45,11 @@ export default function InstructorList({
       }
 
       alert("Request sent successfully!");
+
+      // Remove the instructor from the list after the request is sent
+      setInstructorList((prevInstructors) =>
+        prevInstructors.filter((instructor) => instructor.id !== instructorId)
+      );
     } catch (error) {
       console.error(error);
       alert("Failed to send request");
@@ -76,7 +87,7 @@ export default function InstructorList({
       {showInstructors && (
         <div className="mt-4">
           <ul className="space-y-4">
-            {instructors.map((instructor) => (
+            {instructorList.map((instructor) => (
               <li
                 key={instructor.id}
                 className="p-4 bg-gray-100 rounded-md shadow"
@@ -86,9 +97,13 @@ export default function InstructorList({
                 <button
                   className="px-3 py-2 mt-2 text-sm text-white bg-green-500 rounded-md hover:bg-green-600"
                   onClick={() => handleRequestReview(instructor.id)}
-                  disabled={!!requestStatus} // Disable button if a request already exists
+                  disabled={!!requestStatus && requestStatus !== "DECLINED"} // Disable button if a request already exists and not declined
                 >
-                  {requestStatus ? "Already Requested" : "Request"}
+                  {requestStatus === "DECLINED"
+                    ? "Request Again"
+                    : requestStatus
+                    ? "Already Requested"
+                    : "Request"}
                 </button>
               </li>
             ))}

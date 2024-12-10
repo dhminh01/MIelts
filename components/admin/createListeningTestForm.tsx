@@ -136,40 +136,40 @@ export default function CreateListeningTestPage() {
     }
   };
 
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    sectionIndex: number
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("audio", file);
+  // const handleFileChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   sectionIndex: number
+  // ) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     const formData = new FormData();
+  //     formData.append("audio", file);
 
-      // Upload the file to the server
-      fetch("/api/upload-audio", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.audioURL) {
-            const updatedSections = [...formData.sections];
-            updatedSections[sectionIndex].audioURL = data.audioURL; // Corrected here
-            setFormData((prevData) => ({
-              ...prevData,
-              sections: updatedSections,
-            }));
-          }
-        })
-        .catch((error) => {
-          console.error("Error uploading audio file:", error);
-        });
-    }
-  };
+  //     // Upload the file to the server
+  //     fetch("/api/upload-audio", {
+  //       method: "POST",
+  //       body: formData,
+  //     })
+  //       .then((response) => response.json())
+  //       .then((data) => {
+  //         if (data.audioURL) {
+  //           const updatedSections = [...formData.sections];
+  //           updatedSections[sectionIndex].audioURL = data.audioURL; // Corrected here
+  //           setFormData((prevData) => ({
+  //             ...prevData,
+  //             sections: updatedSections,
+  //           }));
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error uploading audio file:", error);
+  //       });
+  //   }
+  // };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <CldUploadButton uploadPreset="my-preset" />
+      {/* <CldUploadButton uploadPreset="my-preset" /> */}
       <input
         type="text"
         name="title"
@@ -200,12 +200,15 @@ export default function CreateListeningTestPage() {
             className="w-full p-2 border border-gray-300 rounded-md"
           />
           <input
-            type="file"
-            accept="audio/*"
-            onChange={(e) => handleFileChange(e, sectionIndex)}
+            type="text"
+            name="audioURL"
+            value={section.audioURL}
+            onChange={(e) => handleChange(e, sectionIndex)}
+            placeholder="Audio URL"
+            required
             className="w-full p-2 border border-gray-300 rounded-md"
           />
-          {section.audioURL && <p>Audio uploaded: {section.audioURL}</p>}
+          {section.audioURL && <p>Audio URL: {section.audioURL}</p>}
           <button
             type="button"
             onClick={() => handleDeleteSection(sectionIndex)}

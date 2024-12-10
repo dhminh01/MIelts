@@ -3,19 +3,15 @@
 import { useState } from "react";
 
 const CreateWritingTest = () => {
-  const [selectedFileTask1, setSelectedFileTask1] = useState<File | null>(null);
-  const [selectedFileTask2, setSelectedFileTask2] = useState<File | null>(null);
-  const [imageURLTask1, setImageURLTask1] = useState<string | null>(null);
-  const [imageURLTask2, setImageURLTask2] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     task1Title: "",
     task2Title: "",
     task1_description: "",
     task2_description: "",
-    task1_image: null, // Store file object
-    task2_image: null, // Store file object
-    task1_word_limit: 250,
+    task1_image: "", // Store image URL as string
+    task2_image: "", // Store image URL as string
+    task1_word_limit: 150,
     task2_word_limit: 250,
   });
 
@@ -26,54 +22,32 @@ const CreateWritingTest = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleFileChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    task: string
-  ) => {
-    const file = event.target.files?.[0] || null;
-    if (task === "task1") {
-      setSelectedFileTask1(file);
-      if (file) {
-        const url = URL.createObjectURL(file);
-        setImageURLTask1(url);
-      }
-    } else if (task === "task2") {
-      setSelectedFileTask2(file);
-      if (file) {
-        const url = URL.createObjectURL(file);
-        setImageURLTask2(url);
-      }
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    const { name } = e.target;
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: reader.result as string,
+        }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Prepare form data to be sent with file upload
-    const formDataToSend = new FormData();
-    formDataToSend.append("title", formData.title);
-    formDataToSend.append("task1Title", formData.task1Title);
-    formDataToSend.append("task2Title", formData.task2Title);
-    formDataToSend.append("task1_description", formData.task1_description);
-    formDataToSend.append("task2_description", formData.task2_description);
-    formDataToSend.append(
-      "task1_word_limit",
-      formData.task1_word_limit.toString()
-    );
-    formDataToSend.append(
-      "task2_word_limit",
-      formData.task2_word_limit.toString()
-    );
-
-    if (selectedFileTask1)
-      formDataToSend.append("task1_image", selectedFileTask1);
-    if (selectedFileTask2)
-      formDataToSend.append("task2_image", selectedFileTask2);
-
     try {
       const res = await fetch("/api/admin/create-writing-test", {
         method: "POST",
-        body: formDataToSend,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
@@ -88,27 +62,19 @@ const CreateWritingTest = () => {
           task2Title: "",
           task1_description: "",
           task2_description: "",
-          task1_image: null,
-          task2_image: null,
-          task1_word_limit: 250,
+          task1_image: "",
+          task2_image: "",
+          task1_word_limit: 150,
           task2_word_limit: 250,
         });
-        setSelectedFileTask1(null);
-        setSelectedFileTask2(null);
-        setImageURLTask1(null);
-        setImageURLTask2(null);
       }
     } catch (error) {
-      alert("Error creating test: " + error.message);
+      alert("Error creating test: " + error);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      encType="multipart/form-data"
-      className="space-y-4"
-    >
+    <form onSubmit={handleSubmit} className="space-y-4">
       <input
         type="text"
         name="title"
@@ -153,24 +119,61 @@ const CreateWritingTest = () => {
         className="w-full p-2 border border-gray-300 rounded-md"
       />
 
-      {/* File Upload Inputs */}
+      {/* Image URL Inputs
       <input
-        type="file"
-        onChange={(e) => handleFileChange(e, "task1")}
+        type="text"
+        name="task1_image"
+        value={formData.task1_image}
+        onChange={handleChange}
+        placeholder="Task 1 Image URL"
         className="w-full p-2 border border-gray-300 rounded-md"
-      />
-      {imageURLTask1 && (
-        <img src={imageURLTask1} alt="Task 1 preview" className="mt-2" />
-      )}
+      /> */}
 
-      <input
-        type="file"
-        onChange={(e) => handleFileChange(e, "task2")}
+      <div>
+        <label className="block text-sm font-medium">Task 1 image:</label>
+        <input
+          type="file"
+          name="task1_image"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="block w-full"
+          required
+        />
+        {formData.task1_image && (
+          <img
+            src={formData.task1_image}
+            alt="ID Preview"
+            className="w-auto h-20 mt-2"
+          />
+        )}
+      </div>
+
+      {/* <input
+        type="text"
+        name="task2_image"
+        value={formData.task2_image}
+        onChange={handleChange}
+        placeholder="Task 2 Image URL"
         className="w-full p-2 border border-gray-300 rounded-md"
-      />
-      {imageURLTask2 && (
-        <img src={imageURLTask2} alt="Task 2 preview" className="mt-2" />
-      )}
+      /> */}
+      <div>
+        <label className="block text-sm font-medium">Task 2 image:</label>
+        <input
+          type="file"
+          name="task2_image"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="block w-full"
+          required
+        />
+        {formData.task2_image && (
+          <img
+            src={formData.task2_image}
+            alt="ID Preview"
+            className="w-auto h-20 mt-2"
+          />
+        )}
+      </div>
 
       <input
         type="number"
@@ -193,9 +196,9 @@ const CreateWritingTest = () => {
 
       <button
         type="submit"
-        className="px-4 py-2 text-white bg-blue-500 rounded-md"
+        className="w-full px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-400"
       >
-        Create Test
+        Submit
       </button>
     </form>
   );
